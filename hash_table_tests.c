@@ -7,3 +7,8 @@ void test_create_destroy()
    CU_ASSERT_PTR_NOT_NULL(ht);
    ioopm_hash_table_destroy(ht);
 }
+
+int main() {
+  test_create_destroy();
+  return 0;
+}
