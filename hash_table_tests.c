@@ -1,5 +1,5 @@
 #include <hash_table.h>
-#include <CameraUIControl.h>/Basic.h>
+#include <CUnit/Basic.h>
 
 void test_create_destroy()
 {
