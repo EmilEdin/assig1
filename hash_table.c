@@ -2,12 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
-  // TODO: Stub
- return;
-}
-
 typedef struct entry entry_t;
 
 struct entry
@@ -28,4 +22,8 @@ ioopm_hash_table_t *ioopm_hash_table_create()
   /// entry_t's, which will be set to NULL
   ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
   return result;
+}
+
+void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
+  free(ht);
 }
