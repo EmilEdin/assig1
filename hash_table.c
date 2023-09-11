@@ -1,4 +1,5 @@
 #include "hash_table.h"
+#include <stdio.h>
 
 ioopm_hash_table_t *ioopm_hash_table_create(void) {
  // TODO: Stub
