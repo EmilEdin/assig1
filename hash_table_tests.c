@@ -1,4 +1,4 @@
-#include <hash_table.h>
+#include "hash_table.h"
 #include <CUnit/Basic.h>
 
 void test_create_destroy()
