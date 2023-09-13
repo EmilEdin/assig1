@@ -13,16 +13,25 @@ int clean_suite(void) {
   return 0;
 }
 
-void test1()
+void test_create_destroy(void)
 {
    ioopm_hash_table_t *ht = ioopm_hash_table_create();
-   //CU_ASSERT_PTR_NOT_NULL(ht);
+   CU_ASSERT_PTR_NOT_NULL(ht);
    ioopm_hash_table_destroy(ht);
 }
 
-void test2(void) {
-  CU_ASSERT_EQUAL(1 + 1, 2);
+void test_insert_once()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  for (int i = 0; i <= 16; ++i) {
+    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, i));
+  }
+  ioopm_hash_table_insert(ht, 6, "Hej");
+  CU_ASSERT_STRING_EQUAL("Hej", ioopm_hash_table_lookup(ht, 6));
+  ioopm_hash_table_destroy(ht);
+
 }
+
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -44,8 +53,8 @@ int main() {
   // the test in question. If you want to add another test, just
   // copy a line below and change the information
   if (
-    (CU_add_test(my_test_suite, "A simple test", test1) == NULL) ||
-    (CU_add_test(my_test_suite, "Basic arithmetics", test2) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for create_destroy functionality", test_create_destroy) == NULL) || 
+    (CU_add_test(my_test_suite, "Test for insert_lookup functionality", test_insert_once) == NULL) ||
     0
   )
     {
