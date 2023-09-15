@@ -146,6 +146,24 @@ else
   {
     return (option_t) { .success = false };
   }
-}
+};
 
+option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
+{
+  /// Find the previous entry for key
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % 17], key);
+  entry_t *next = tmp->next;
+  option_t t = { .success = true, .value = next->value};
+
+  if (next && next->value)
+  {
+    tmp->next = next->next;
+    free(next);
+    return t;
+  }
+  else
+  {
+    return t;
+  }
+};
 

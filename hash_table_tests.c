@@ -41,7 +41,26 @@ void test_insert_once()
   option_t but = ioopm_hash_table_lookup(ht, 6);
   char *lol1 = but.value;
   CU_ASSERT_PTR_NOT_NULL(lol1);
-  ioopm_hash_table_destroy(ht);
+  option_t but1 = ioopm_hash_table_remove(ht, 6);
+  char *lol2 = but1.value;
+  CU_ASSERT_PTR_NOT_NULL(lol2);
+  option_t but3 = ioopm_hash_table_lookup(ht, 6);
+  char *lol3 = but3.value;
+  CU_ASSERT_PTR_NULL(lol3);
+
+  //CU_ASSERT_PTR_NULL(lol1);
+
+
+  /* TODO:
+  option_t but2 = ioopm_hash_table_lookup(ht, -2);
+  char *lol3 = but2.value;
+  CU_ASSERT_PTR_NULL(lol3);
+  ioopm_hash_table_insert(ht, -1, "Hej");
+  option_t but1 = ioopm_hash_table_lookup(ht, -1);
+  char *lol2 = but1.value;
+  CU_ASSERT_PTR_NOT_NULL(lol2);
+  */
+ ioopm_hash_table_destroy(ht);
 }
 
 
