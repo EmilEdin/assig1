@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#define No_Buckets 17
+
 typedef struct entry entry_t;
 
 struct entry
@@ -15,7 +17,7 @@ struct entry
 
 struct hash_table
 {
-  entry_t *buckets[17];
+  entry_t *buckets[No_Buckets];
 };
 
 
@@ -39,10 +41,10 @@ void entry_destroy(entry_t *entry) {
 
 ioopm_hash_table_t *ioopm_hash_table_create()
 {
-  /// Allocate space for a ioopm_hash_table_t = 17 pointers to
+  /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
   /// entry_t's, which will be set to NULL
   ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
-  for (int i = 0; i < 17; i++) {
+  for (int i = 0; i < No_Buckets; i++) {
     result->buckets[i] = entry_create(0, NULL, NULL);
   }
   return result;
@@ -50,7 +52,7 @@ ioopm_hash_table_t *ioopm_hash_table_create()
 
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
   // TODO 
-  for (int i = 0; i < 17; i++) {
+  for (int i = 0; i < No_Buckets; i++) {
     entry_destroy(ht->buckets[i]);
   }
   free(ht);
@@ -99,7 +101,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
   
   /// Calculate the bucket for this entry
-  int bucket = key % 17;
+  int bucket = key % No_Buckets;
   /// Search for an existing entry for a key
   // TODO &ht
   entry_t *entry = find_previous_entry_for_key(&((*ht).buckets[bucket]), key);
@@ -116,14 +118,8 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
     }
 }
 
-/*
-typedef union {
-  bool success;
-  char *value;
-} option_t;
-*/
 
-typedef struct option option_t;
+typedef struct option ioopm_option_t;
 
 struct option
 {
@@ -132,38 +128,38 @@ struct option
 };
 
 
-option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
+ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % 17], key);
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % No_Buckets], key);
   entry_t *next = tmp->next;
 
   if (next && next->value)
   {
-    return (option_t) { .success = true, .value = next->value };
+    return (ioopm_option_t) { .success = true, .value = next->value };
   }
 else
   {
-    return (option_t) { .success = false };
+    return (ioopm_option_t) { .success = false };
   }
 };
 
-option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
+ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % 17], key);
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % No_Buckets], key);
   entry_t *next = tmp->next;
-  option_t t = { .success = true, .value = next->value};
+  ioopm_option_t options = { .success = true, .value = next->value};
 
   if (next && next->value)
   {
     tmp->next = next->next;
     free(next);
-    return t;
+    return options;
   }
   else
   {
-    return t;
+    return options;
   }
 };
 

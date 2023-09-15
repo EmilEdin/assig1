@@ -2,7 +2,7 @@
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 
-typedef struct option option_t;
+typedef struct option ioopm_option_t;
 
 struct option
 {
@@ -33,18 +33,18 @@ void test_insert_once()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   for (int i = 0; i <= 16; ++i) {
-    option_t answer = ioopm_hash_table_lookup(ht, i);
+    ioopm_option_t answer = ioopm_hash_table_lookup(ht, i);
     char *lol = answer.value;
     CU_ASSERT_PTR_NULL(lol);
   }
   ioopm_hash_table_insert(ht, 6, "Hej");
-  option_t but = ioopm_hash_table_lookup(ht, 6);
+  ioopm_option_t but = ioopm_hash_table_lookup(ht, 6);
   char *lol1 = but.value;
   CU_ASSERT_PTR_NOT_NULL(lol1);
-  option_t but1 = ioopm_hash_table_remove(ht, 6);
+  ioopm_option_t but1 = ioopm_hash_table_remove(ht, 6);
   char *lol2 = but1.value;
   CU_ASSERT_PTR_NOT_NULL(lol2);
-  option_t but3 = ioopm_hash_table_lookup(ht, 6);
+  ioopm_option_t but3 = ioopm_hash_table_lookup(ht, 6);
   char *lol3 = but3.value;
   CU_ASSERT_PTR_NULL(lol3);
 
@@ -52,11 +52,11 @@ void test_insert_once()
 
 
   /* TODO:
-  option_t but2 = ioopm_hash_table_lookup(ht, -2);
+  ioopm_option_t but2 = ioopm_hash_table_lookup(ht, -2);
   char *lol3 = but2.value;
   CU_ASSERT_PTR_NULL(lol3);
   ioopm_hash_table_insert(ht, -1, "Hej");
-  option_t but1 = ioopm_hash_table_lookup(ht, -1);
+  ioopm_option_t but1 = ioopm_hash_table_lookup(ht, -1);
   char *lol2 = but1.value;
   CU_ASSERT_PTR_NOT_NULL(lol2);
   */
