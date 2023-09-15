@@ -1,5 +1,14 @@
 #include "hash_table.h"
 #include <CUnit/Basic.h>
+#include <stdbool.h>
+
+typedef struct option option_t;
+
+struct option
+{
+  bool success;
+  char *value;
+};
 
 int init_suite(void) {
   // Change this function if you want to do something *before* you
@@ -24,12 +33,15 @@ void test_insert_once()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   for (int i = 0; i <= 16; ++i) {
-    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, i));
+    option_t answer = ioopm_hash_table_lookup(ht, i);
+    char *lol = answer.value;
+    CU_ASSERT_PTR_NULL(lol);
   }
   ioopm_hash_table_insert(ht, 6, "Hej");
-  ioopm_hash_table_lookup(ht, 6);
+  option_t but = ioopm_hash_table_lookup(ht, 6);
+  char *lol1 = but.value;
+  CU_ASSERT_PTR_NOT_NULL(lol1);
   ioopm_hash_table_destroy(ht);
-
 }
 
 

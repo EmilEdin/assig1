@@ -8,16 +8,14 @@ typedef struct entry entry_t;
 
 struct entry
 {
-int key;       // holds the key
-char *value;   // holds the value
-entry_t *next; // points to the next entry (possibly NULL)
+  int key;       // holds the key
+  char *value;   // holds the value
+  entry_t *next; // points to the next entry (possibly NULL)
 };
 
 struct hash_table
 {
-entry_t *buckets[17];
-
-
+  entry_t *buckets[17];
 };
 
 
@@ -63,14 +61,14 @@ static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
   entry_t *t1 = (*entry)->next;
   if (t1 == NULL) {
     return *entry;
-  } else if (t1->key > key) {
+  } else if (t1->key >= key) {
     return *entry;
   } else {
     return find_previous_entry_for_key(&t1, key);
   }
 }
 
-
+/*
 static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
   entry_t *t1 = (*entry)->next;
   if (t1 == NULL) {
@@ -94,7 +92,7 @@ static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
   }
   return *entry;
 }
-
+*/
 
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
@@ -126,6 +124,7 @@ typedef union {
 */
 
 typedef struct option option_t;
+
 struct option
 {
   bool success;
@@ -133,7 +132,7 @@ struct option
 };
 
 
-option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
+option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
   entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % 17], key);
@@ -141,14 +140,12 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 
   if (next && next->value)
   {
-    option_t result = { .success = true, .value = next->value };
-    char *r = result.value;
-    return r;
+    return (option_t) { .success = true, .value = next->value };
   }
 else
   {
-    option_t result = { .success = false };
-    bool *l = result.success;
-    return l;
+    return (option_t) { .success = false };
   }
 }
+
+
