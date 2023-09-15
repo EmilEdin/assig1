@@ -14,6 +14,7 @@
  */
 
 typedef struct hash_table ioopm_hash_table_t;
+typedef struct option option_t;
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
@@ -33,7 +34,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value);
 /// @param ht hash table operated upon
 /// @param key key to lookup
 /// @return the value mapped to by key (FIXME: incomplete)
-char *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
+option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
