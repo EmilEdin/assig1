@@ -2,6 +2,16 @@
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 
+
+typedef struct entry entry_t;
+
+struct entry
+{
+  int key;       // holds the key
+  char *value;   // holds the value
+  entry_t *next; // points to the next entry (possibly NULL)
+};
+
 typedef struct option ioopm_option_t;
 
 struct option
@@ -77,6 +87,35 @@ void test_hash_table_size(void)
   }
   int five_entries = ioopm_hash_table_size(ht);
   CU_ASSERT_EQUAL(the_size, five_entries);
+
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_hash_table_empty(void)
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  // Check if hashtable without entries is empty
+  bool empty = ioopm_hash_table_is_empty(ht);
+  CU_ASSERT_TRUE(empty);
+
+  // Check if hashtable with one entry is not empty
+  ioopm_hash_table_insert(ht, 6, "Hej");
+  bool one_element = ioopm_hash_table_is_empty(ht);
+  CU_ASSERT_FALSE(one_element);
+
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_hash_table_clear(void)
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  ioopm_hash_table_insert(ht, 6, "Hej");
+  ioopm_hash_table_clear(ht);
+  entry_t *t = ht->buckets[6]->next;
+  CU_ASSERT_PTR_NULL(t);
+
   ioopm_hash_table_destroy(ht);
 }
 
@@ -104,6 +143,8 @@ int main() {
     (CU_add_test(my_test_suite, "Test for create_destroy functionality", test_create_destroy) == NULL) || 
     (CU_add_test(my_test_suite, "Test for insert_once functionality", test_insert_once) == NULL) ||
     (CU_add_test(my_test_suite, "Test for size functionality", test_hash_table_size) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for empty functionality", test_hash_table_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for clear functionality", test_hash_table_clear) == NULL) ||
     0
   )
     {

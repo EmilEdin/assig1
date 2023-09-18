@@ -56,11 +56,11 @@ int ioopm_hash_table_size(ioopm_hash_table_t *ht);
 /// @param h hash table operated upon
 /// @return true is size == 0, else false
 bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht);
-/*
+
 /// @brief clear all the entries in a hash table
 /// @param h hash table operated upon
 void ioopm_hash_table_clear(ioopm_hash_table_t *ht);
-
+/*
 /// @brief return the keys for all entries in a hash map (in no particular order, but same as ioopm_hash_table_values)
 /// @param h hash table operated upon
 /// @return an array of keys for hash table h

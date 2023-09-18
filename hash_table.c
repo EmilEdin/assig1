@@ -55,6 +55,7 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
   for (int i = 0; i < No_Buckets; i++) {
     entry_destroy(ht->buckets[i]);
   }
+  free(ht);
 }
 
 // vi börjar med NULL 0 så vi måste gå på först
@@ -172,4 +173,26 @@ int ioopm_hash_table_size(ioopm_hash_table_t *ht) {
       }
   }
   return counter;
+}
+
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
+{
+  for (int i = 0; i < No_Buckets; i++) {
+    if (ht->buckets[i]->next != NULL) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void ioopm_hash_table_clear(ioopm_hash_table_t *ht) 
+{
+  for (int i = 0; i < No_Buckets; i++) {
+    entry_t *t = ht->buckets[i]->next;
+    if (t != NULL)
+    {
+      entry_destroy(t);
+      ht->buckets[i]->next = NULL;
+    }
+  }
 }
