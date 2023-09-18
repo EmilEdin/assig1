@@ -34,32 +34,26 @@ void test_insert_once()
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   for (int i = 0; i <= 16; ++i) {
     ioopm_option_t answer = ioopm_hash_table_lookup(ht, i);
-    char *lol = answer.value;
-    CU_ASSERT_PTR_NULL(lol);
+    char *struct_value = answer.value;
+    CU_ASSERT_PTR_NULL(struct_value);
   }
+  // TODO: Test when insert and lookup are given a negative integer.
+  
+  // Checks that insert works combined with lookup.
   ioopm_hash_table_insert(ht, 6, "Hej");
-  ioopm_option_t but = ioopm_hash_table_lookup(ht, 6);
-  char *lol1 = but.value;
-  CU_ASSERT_PTR_NOT_NULL(lol1);
-  ioopm_option_t but1 = ioopm_hash_table_remove(ht, 6);
-  char *lol2 = but1.value;
-  CU_ASSERT_PTR_NOT_NULL(lol2);
-  ioopm_option_t but3 = ioopm_hash_table_lookup(ht, 6);
-  char *lol3 = but3.value;
-  CU_ASSERT_PTR_NULL(lol3);
+  ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, 6);
+  char *struct_value_of_test = struct_test.value;
+  CU_ASSERT_PTR_NOT_NULL(struct_value_of_test);
+  // Checks that remove function works combined with lookup.
+  ioopm_option_t remove_test = ioopm_hash_table_remove(ht, 6);
+  char *remove = remove_test.value;
+  // Remove will return the value string if remove was a success.
+  CU_ASSERT_PTR_NOT_NULL(remove);
+  // Checks that we removed the entry struct.
+  ioopm_option_t removed_struct = ioopm_hash_table_lookup(ht, 6);
+  char *struct_value_of_removed_struct = removed_struct.value;
+  CU_ASSERT_PTR_NULL(struct_value_of_removed_struct);
 
-  //CU_ASSERT_PTR_NULL(lol1);
-
-
-  /* TODO:
-  ioopm_option_t but2 = ioopm_hash_table_lookup(ht, -2);
-  char *lol3 = but2.value;
-  CU_ASSERT_PTR_NULL(lol3);
-  ioopm_hash_table_insert(ht, -1, "Hej");
-  ioopm_option_t but1 = ioopm_hash_table_lookup(ht, -1);
-  char *lol2 = but1.value;
-  CU_ASSERT_PTR_NOT_NULL(lol2);
-  */
  ioopm_hash_table_destroy(ht);
 }
 
