@@ -57,6 +57,29 @@ void test_insert_once()
  ioopm_hash_table_destroy(ht);
 }
 
+void test_hash_table_size(void)
+{
+   ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  // Checks that size of empty hashtable is 0.
+   int empty_hash_table = ioopm_hash_table_size(ht);
+   CU_ASSERT_EQUAL(0, empty_hash_table);
+
+  // Checks that size of hashtable is one.
+  ioopm_hash_table_insert(ht, 6, "Hej");
+  int one_entry = ioopm_hash_table_size(ht);
+  CU_ASSERT_EQUAL(1, one_entry);
+  ioopm_hash_table_remove(ht, 6);
+
+  // Checks that size of hashtable is the_size
+  int the_size = 5;
+  for (int i = 1; i <= 5; i++) {
+    ioopm_hash_table_insert(ht, i, "Hello");
+  }
+  int five_entries = ioopm_hash_table_size(ht);
+  CU_ASSERT_EQUAL(the_size, five_entries);
+  ioopm_hash_table_destroy(ht);
+}
+
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -80,6 +103,7 @@ int main() {
   if (
     (CU_add_test(my_test_suite, "Test for create_destroy functionality", test_create_destroy) == NULL) || 
     (CU_add_test(my_test_suite, "Test for insert_once functionality", test_insert_once) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for size functionality", test_hash_table_size) == NULL) ||
     0
   )
     {

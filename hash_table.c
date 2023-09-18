@@ -55,18 +55,17 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
   for (int i = 0; i < No_Buckets; i++) {
     entry_destroy(ht->buckets[i]);
   }
-  free(ht);
 }
 
 // vi börjar med NULL 0 så vi måste gå på först
-static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
-  entry_t *t1 = (*entry)->next;
+static entry_t *find_previous_entry_for_key(entry_t *entry, int key) {
+  entry_t *t1 = entry->next;
   if (t1 == NULL) {
-    return *entry;
+    return entry;
   } else if (t1->key >= key) {
-    return *entry;
+    return entry;
   } else {
-    return find_previous_entry_for_key(&t1, key);
+    return find_previous_entry_for_key(t1, key);
   }
 }
 
@@ -104,7 +103,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
   int bucket = key % No_Buckets;
   /// Search for an existing entry for a key
   // TODO &ht
-  entry_t *entry = find_previous_entry_for_key(&((*ht).buckets[bucket]), key);
+  entry_t *entry = find_previous_entry_for_key((*ht).buckets[bucket], key);
   entry_t *next = entry->next;
 
   /// Check if the next entry should be updated or not
@@ -131,7 +130,7 @@ struct option
 ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % No_Buckets], key);
+  entry_t *tmp = find_previous_entry_for_key(ht->buckets[key % No_Buckets], key);
   entry_t *next = tmp->next;
 
   if (next && next->value)
@@ -142,12 +141,12 @@ else
   {
     return (ioopm_option_t) { .success = false };
   }
-};
+}
 
 ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % No_Buckets], key);
+  entry_t *tmp = find_previous_entry_for_key(ht->buckets[key % No_Buckets], key);
   entry_t *next = tmp->next;
   ioopm_option_t options = { .success = true, .value = next->value};
 
@@ -161,5 +160,16 @@ ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
   {
     return options;
   }
-};
+}
 
+int ioopm_hash_table_size(ioopm_hash_table_t *ht) {
+  int counter = 0;
+  for (int i = 0; i < No_Buckets; i++) {
+    entry_t *t = ht->buckets[i];
+      while (t->next != NULL) {
+        counter = counter + 1;
+        t = t->next;
+      }
+  }
+  return counter;
+}
