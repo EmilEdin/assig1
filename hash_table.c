@@ -196,3 +196,37 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
     }
   }
 }
+
+int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+{
+  int size = ioopm_hash_table_size(ht);
+  int *arr = calloc(size, sizeof(int));
+  int counter = 0;
+  
+  for (int i = 0; i < No_Buckets; i++) {
+    entry_t *t = ht->buckets[i]->next;
+    while (t != NULL) {
+      arr[counter] = t->key;
+      counter++;
+      t = t->next;
+    }
+  }
+  
+  return arr;
+}
+
+char **ioopm_hash_table_values(ioopm_hash_table_t *ht) 
+{
+  int size = ioopm_hash_table_size(ht);
+  char **arr = calloc(size, sizeof(char*));
+  int counter = 0;
+  for (int i = 0; i < No_Buckets; i++) {
+    entry_t *t = ht->buckets[i]->next;
+    while (t != NULL) {
+      arr[counter] = t->value;
+      counter++;
+      t = t->next;
+    }
+  }
+  return arr;
+}

@@ -11,6 +11,11 @@ struct entry
   char *value;   // holds the value
   entry_t *next; // points to the next entry (possibly NULL)
 };
+#define No_Buckets 17
+struct hash_table
+{
+  entry_t *buckets[No_Buckets];
+};
 
 typedef struct option ioopm_option_t;
 
@@ -119,6 +124,57 @@ void test_hash_table_clear(void)
   ioopm_hash_table_destroy(ht);
 }
 
+void test_hash_table_keys(void) {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  int keys[5] = {1, 2, 3, 4, 5};
+  bool found[5] = {false, false, false, false, false};
+  for (int i = 1; i <= 5; i++) {
+    ioopm_hash_table_insert(ht, i, "Hej");
+  }
+  int *arr = ioopm_hash_table_keys(ht);
+  for (int index = 0; index < 5; index++) {
+    for (int j = 0; j < 5; j++) {
+      if (arr[j] == keys[index]) {
+        found[j] = true;
+        break;
+      } else if (j == 4) {
+        CU_FAIL("Found a key that was never inserted!");
+      }
+    }
+  }
+  
+  for (int i = 0; i < 5; i++) {
+      CU_ASSERT_TRUE(found[i]);
+  }
+  free(arr);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_hash_table_values(void) {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  int keys[5] = {3, 10, 42, 1, 99};
+  char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
+  ioopm_hash_table_insert(ht, 3, "three");
+  ioopm_hash_table_insert(ht, 10, "ten");
+  ioopm_hash_table_insert(ht, 42, "fortytwo");
+  ioopm_hash_table_insert(ht, 1, "zero");
+  ioopm_hash_table_insert(ht, 99, "ninetynine");
+  int *k = ioopm_hash_table_keys(ht);
+  char **v = ioopm_hash_table_values(ht);
+
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 5; j++) {
+      if (k[i] == keys[j]) {
+        CU_ASSERT_FALSE(strcmp(v[i], values[j]));
+        }
+      }
+    }
+  free(k);
+  free(v);
+  ioopm_hash_table_destroy(ht);
+}
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -145,6 +201,8 @@ int main() {
     (CU_add_test(my_test_suite, "Test for size functionality", test_hash_table_size) == NULL) ||
     (CU_add_test(my_test_suite, "Test for empty functionality", test_hash_table_empty) == NULL) ||
     (CU_add_test(my_test_suite, "Test for clear functionality", test_hash_table_clear) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for keys functionality", test_hash_table_keys) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for values functionality", test_hash_table_values) == NULL) ||
     0
   )
     {
