@@ -69,7 +69,7 @@ int *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
 /// @param h hash table operated upon
 /// @return an array of values for hash table h
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht);
-/*
+
 /// @brief check if a hash table has an entry with a given key
 /// @param h hash table operated upon
 /// @param key the key sought
@@ -80,6 +80,7 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key);
 /// @param value the value sought
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value);
 
+/*
 /// @brief check if a predicate is satisfied by all entries in a hash table
 /// @param h hash table operated upon
 /// @param pred the predicate

@@ -176,6 +176,61 @@ void test_hash_table_values(void) {
   ioopm_hash_table_destroy(ht);
 }
 
+void test_hash_table_has_key(void) {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  
+  ioopm_hash_table_insert(ht, 3, "three");
+  ioopm_hash_table_insert(ht, 10, "ten");
+  ioopm_hash_table_insert(ht, 42, "fortytwo");
+  ioopm_hash_table_insert(ht, 1, "zero");
+  ioopm_hash_table_insert(ht, 99, "ninetynine");
+
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 3));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 10));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 42));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 1));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 99));
+
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_hash_table_has_value(void) {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  
+  ioopm_hash_table_insert(ht, 3, "three");
+  ioopm_hash_table_insert(ht, 10, "ten");
+  ioopm_hash_table_insert(ht, 42, "fortytwo");
+  ioopm_hash_table_insert(ht, 1, "zero");
+  ioopm_hash_table_insert(ht, 99, "ninetynine");
+
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "three"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "ten"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "fortytwo"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "zero"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "ninetynine"));
+  
+  char *copy_three = strdup("three");
+  char *copy_ten = strdup("ten");
+  char *copy_fortytwo = strdup("fortytwo");
+  char *copy_zero = strdup("zero");
+  char *copy_ninetynine = strdup("ninetynine");
+
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, copy_three));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, copy_ten));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, copy_fortytwo));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, copy_zero));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, copy_ninetynine));
+
+  free(copy_three);
+  free(copy_ten);
+  free(copy_fortytwo);
+  free(copy_zero);
+  free(copy_ninetynine);
+
+
+  ioopm_hash_table_destroy(ht);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -203,6 +258,9 @@ int main() {
     (CU_add_test(my_test_suite, "Test for clear functionality", test_hash_table_clear) == NULL) ||
     (CU_add_test(my_test_suite, "Test for keys functionality", test_hash_table_keys) == NULL) ||
     (CU_add_test(my_test_suite, "Test for values functionality", test_hash_table_values) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for has_key functionality", test_hash_table_has_key) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for has_value functionality", test_hash_table_has_value) == NULL) ||
+    
     0
   )
     {

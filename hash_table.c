@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include "string.h"
 
 #define No_Buckets 17
 
@@ -218,7 +219,7 @@ int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
   int size = ioopm_hash_table_size(ht);
-  char **arr = calloc(size, sizeof(char*));
+  char **arr = calloc(1, (sizeof(char*)*size) + 1);
   int counter = 0;
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
@@ -228,5 +229,27 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
       t = t->next;
     }
   }
+  arr[counter + 1] = NULL;
   return arr;
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key) {
+  ioopm_option_t get_bool = ioopm_hash_table_lookup(ht, key);
+  bool result = get_bool.success;
+  return result;
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
+  char** array_of_values = ioopm_hash_table_values(ht);
+  int counter = 0;
+  while (array_of_values[counter] != NULL) {
+    if (strcmp(array_of_values[counter], value) == 0) {
+      free(array_of_values);
+      return true;
+    } else {
+    counter = counter + 1;
+    }
+  }
+  free(array_of_values);
+  return false;
 }
