@@ -7,8 +7,6 @@
 
 #define No_Buckets 17
 
-typedef bool(*ioopm_predicate)(int key, char *value, void *extra);
-typedef void(*ioopm_apply_function)(int key, char **value, void *extra);
 
 typedef struct entry entry_t;
 
@@ -293,6 +291,7 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key) {
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
   return ioopm_hash_table_any(ht, value_equiv, value);
 }
+
 
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
 {
