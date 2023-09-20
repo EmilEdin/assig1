@@ -156,14 +156,16 @@ void test_hash_table_values(void) {
 
   int keys[5] = {3, 10, 42, 1, 99};
   char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
+
   ioopm_hash_table_insert(ht, 3, "three");
   ioopm_hash_table_insert(ht, 10, "ten");
   ioopm_hash_table_insert(ht, 42, "fortytwo");
   ioopm_hash_table_insert(ht, 1, "zero");
   ioopm_hash_table_insert(ht, 99, "ninetynine");
+
   int *k = ioopm_hash_table_keys(ht);
   char **v = ioopm_hash_table_values(ht);
-
+  int siz = ioopm_hash_table_size(ht);
   for (int i = 0; i < 5; i++) {
     for (int j = 0; j < 5; j++) {
       if (k[i] == keys[j]) {
@@ -173,6 +175,7 @@ void test_hash_table_values(void) {
     }
   free(k);
   free(v);
+  
   ioopm_hash_table_destroy(ht);
 }
 

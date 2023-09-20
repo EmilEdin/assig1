@@ -220,7 +220,7 @@ int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
   int size = ioopm_hash_table_size(ht);
-  char **arr = calloc(1, (sizeof(char*)*size) + 1);
+  char **arr = calloc(1, (sizeof(char*)*size) + sizeof(char*));
   int counter = 0;
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
@@ -230,7 +230,7 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
       t = t->next;
     }
   }
-  arr[counter + 1] = NULL;
+  arr[counter] = NULL;
   return arr;
 }
 
