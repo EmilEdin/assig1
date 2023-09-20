@@ -7,6 +7,9 @@
 
 #define No_Buckets 17
 
+typedef bool(*ioopm_predicate)(int key, char *value, void *extra);
+typedef void(*ioopm_apply_function)(int key, char **value, void *extra);
+
 typedef struct entry entry_t;
 
 struct entry
@@ -233,23 +236,72 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
   return arr;
 }
 
+
+static bool key_equiv(int key, char *value_ignored, void *x)
+{
+  int *other_key_ptr = x;
+  int other_key = *other_key_ptr;
+  return key == other_key;
+}
+
+static bool value_equiv(int key_ignored, char *value, void *x)
+{
+  char *other_value_ptr = x;
+  char *other_value = other_value_ptr;
+  return strcmp(value, other_value) == 0;
+}
+
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+{
+  int size = ioopm_hash_table_size(ht);
+  int *arr_k = ioopm_hash_table_keys(ht);
+  char **arr_v = ioopm_hash_table_values(ht);
+  for (int i = 0; i < size; i++) {
+    if (!pred(arr_k[i], arr_v[i], arg)) {
+      free(arr_k);
+      free(arr_v);
+      return false;   
+    }
+  } 
+  free(arr_k);
+  free(arr_v);
+  return true;
+}
+
+
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+{
+  int size = ioopm_hash_table_size(ht);
+  int *arr_k = ioopm_hash_table_keys(ht);
+  char **arr_v = ioopm_hash_table_values(ht);
+  for (int i = 0; i < size; i++) {
+    if (pred(arr_k[i], arr_v[i], arg)) {
+      free(arr_k);
+      free(arr_v);
+      return true;  
+    }
+  } 
+  free(arr_k);
+  free(arr_v);
+  return false;
+}
+
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key) {
-  ioopm_option_t get_bool = ioopm_hash_table_lookup(ht, key);
-  bool result = get_bool.success;
-  return result;
+  return ioopm_hash_table_any(ht, key_equiv, &key);
 }
 
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
-  char** array_of_values = ioopm_hash_table_values(ht);
-  int counter = 0;
-  while (array_of_values[counter] != NULL) {
-    if (strcmp(array_of_values[counter], value) == 0) {
-      free(array_of_values);
-      return true;
-    } else {
-    counter = counter + 1;
-    }
+  return ioopm_hash_table_any(ht, value_equiv, value);
+}
+
+void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
+{
+  int size = ioopm_hash_table_size(ht); 
+  int *arr_k = ioopm_hash_table_keys(ht);
+  char **arr_v = ioopm_hash_table_values(ht);
+  for (int i = 0; i < size; i++) {
+    apply_fun(arr_k[i], arr_v, arg);
   }
-  free(array_of_values);
-  return false;
+  free(arr_k);
+  free(arr_v);
 }
