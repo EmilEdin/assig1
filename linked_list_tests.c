@@ -24,12 +24,12 @@ int clean_suite(void) {
   return 0;
 }
 
-void test_creat_list(void)
+void test_create_list(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
     CU_ASSERT_PTR_NULL(new_list->next);
     CU_ASSERT_EQUAL(new_list->element, 0);
-    free(new_list);
+    ioopm_linked_list_destroy(new_list);
 }
 
 
@@ -40,9 +40,11 @@ void test_destroy_list(void)
     
     ioopm_linked_list_append(new_list, 2);
     ioopm_linked_list_append(new_list, 3);
-    CU_ASSERT_PTR_NOT_NULL(new_list);
-    ioopm_linked_list_destroy(new_list);
-    CU_ASSERT_PTR_NULL(new_list);
+    CU_ASSERT_PTR_NOT_NULL(new_list->next);
+    // Måste vara remove function
+   // ioopm_linked_list_destroy(new_list);
+   // CU_ASSERT_PTR_NULL(new_list);
+  ioopm_linked_list_destroy(new_list);
 }
 
 void test_append_link(void)
@@ -53,6 +55,7 @@ void test_append_link(void)
     ioopm_linked_list_append(new_list, 2);
 
     CU_ASSERT_EQUAL(new_list->next->element, 2);
+
     ioopm_linked_list_destroy(new_list);
     free(new_list);
 }
@@ -62,7 +65,7 @@ void test_prepend_link(void)
     ioopm_list_t *new_list = ioopm_linked_list_create();
     new_list->element = 1;
     
-    ioopm_linked_list_prepend(new_list, 2);
+    ioopm_linked_list_prepend(&new_list, 2);
     CU_ASSERT_EQUAL(new_list->element, 2);
 
     ioopm_linked_list_destroy(new_list);
@@ -93,7 +96,7 @@ int main() {
   // the test in question. If you want to add another test, just
   // copy a line below and change the information
   if (
-    (CU_add_test(my_test_suite, "Test for create_list functionality", test_creat_list) == NULL) || 
+    (CU_add_test(my_test_suite, "Test for create_list functionality", test_create_list) == NULL) || 
     (CU_add_test(my_test_suite, "Test for destroy_list functionality", test_destroy_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for append_link functionality", test_append_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
