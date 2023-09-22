@@ -23,14 +23,12 @@ ioopm_list_t *ioopm_linked_list_create(void)
 
 void ioopm_linked_list_destroy(ioopm_list_t *list)
 {
-    ioopm_list_t *next_l = list;
-    do {
-        next_l = next_l->next;
-        free(list); 
+    ioopm_list_t *next = list->next;
+    free(list);
+    if (next != NULL) {
+        ioopm_linked_list_destroy(next);
     }
-    while(list != NULL);
 }
-
 void ioopm_linked_list_append(ioopm_list_t *list, int value)
 {
     ioopm_list_t *new_link = ioopm_linked_list_create();
@@ -52,7 +50,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
     new_link->next = list;
     list = new_link;
 }
-
+/*
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
 {
     ioopm_list_t *new_link = ioopm_linked_list_create();
@@ -69,3 +67,4 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
         new_link->next = next_l;
     }
 }
+*/

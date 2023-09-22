@@ -54,6 +54,7 @@ void test_append_link(void)
 
     CU_ASSERT_EQUAL(new_list->next->element, 2);
     ioopm_linked_list_destroy(new_list);
+    free(new_list);
 }
 
 void test_prepend_link(void)
@@ -65,7 +66,9 @@ void test_prepend_link(void)
     CU_ASSERT_EQUAL(new_list->element, 2);
 
     ioopm_linked_list_destroy(new_list);
+    free(new_list);
 }
+
 
 
 
