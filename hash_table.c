@@ -103,7 +103,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
   
   /// Calculate the bucket for this entry
-  int bucket = key % No_Buckets;
+  int bucket = abs(key) % No_Buckets;
   /// Search for an existing entry for a key
   // TODO &ht
   entry_t *entry = find_previous_entry_for_key((*ht).buckets[bucket], key);
@@ -133,7 +133,7 @@ struct option
 ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(ht->buckets[key % No_Buckets], key);
+  entry_t *tmp = find_previous_entry_for_key(ht->buckets[abs(key) % No_Buckets], key);
   entry_t *next = tmp->next;
 
   if (next && next->value)
@@ -149,7 +149,7 @@ else
 ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(ht->buckets[key % No_Buckets], key);
+  entry_t *tmp = find_previous_entry_for_key(ht->buckets[abs(key) % No_Buckets], key);
   entry_t *next = tmp->next;
   ioopm_option_t options = { .success = true, .value = next->value};
 
@@ -217,6 +217,7 @@ int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
   return arr;
 }
 
+
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
   int size = ioopm_hash_table_size(ht);
@@ -233,6 +234,7 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
   arr[counter] = NULL;
   return arr;
 }
+
 
 
 static bool key_equiv(int key, char *value_ignored, void *x)

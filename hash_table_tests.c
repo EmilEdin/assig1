@@ -1,7 +1,7 @@
 #include "hash_table.h"
 #include <CUnit/Basic.h>
 #include <stdbool.h>
-
+#include <stdlib.h>
 
 typedef struct entry entry_t;
 
@@ -68,6 +68,17 @@ void test_insert_once()
   ioopm_option_t removed_struct = ioopm_hash_table_lookup(ht, 6);
   char *struct_value_of_removed_struct = removed_struct.value;
   CU_ASSERT_PTR_NULL(struct_value_of_removed_struct);
+  // Checks that inserts works for negative integer values for key.
+  ioopm_hash_table_insert(ht, -1, "Hej");
+  ioopm_option_t negative_test = ioopm_hash_table_lookup(ht, -1);
+  char *test_negative_key = negative_test.value;
+  CU_ASSERT_PTR_NOT_NULL(test_negative_key);
+  ioopm_hash_table_remove(ht, -1);
+  // Checks that inserts works for zero key
+  ioopm_hash_table_insert(ht, 0, "ju8emjihuj766hui");
+  ioopm_option_t zero_test = ioopm_hash_table_lookup(ht, 0);
+  char *test_zero_key = zero_test.value;
+  CU_ASSERT_PTR_NOT_NULL(test_zero_key);
 
  ioopm_hash_table_destroy(ht);
 }
@@ -80,10 +91,10 @@ void test_hash_table_size(void)
    CU_ASSERT_EQUAL(0, empty_hash_table);
 
   // Checks that size of hashtable is one.
-  ioopm_hash_table_insert(ht, 6, "Hej");
+  ioopm_hash_table_insert(ht, -6, "Hej");
   int one_entry = ioopm_hash_table_size(ht);
   CU_ASSERT_EQUAL(1, one_entry);
-  ioopm_hash_table_remove(ht, 6);
+  ioopm_hash_table_remove(ht, -6);
 
   // Checks that size of hashtable is the_size
   int the_size = 5;
@@ -174,7 +185,7 @@ void test_hash_table_values(void) {
     }
   free(k);
   free(v);
-  
+
   ioopm_hash_table_destroy(ht);
 }
 
@@ -306,6 +317,7 @@ void test_hash_table_all(void)
 }
 
 int main() {
+
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
     return CU_get_error();
