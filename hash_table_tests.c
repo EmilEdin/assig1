@@ -165,7 +165,6 @@ void test_hash_table_values(void) {
 
   int *k = ioopm_hash_table_keys(ht);
   char **v = ioopm_hash_table_values(ht);
-  int siz = ioopm_hash_table_size(ht);
   for (int i = 0; i < 5; i++) {
     for (int j = 0; j < 5; j++) {
       if (k[i] == keys[j]) {

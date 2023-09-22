@@ -32,7 +32,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value);
 /// @param index the position in the list
 /// @param value the value to be inserted 
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value);
-
+/*
 /// @brief Remove an element from a linked list in O(n) time.
 /// The valid values of index are [0,n-1] for a list of n elements,
 /// where 0 means the first element and n-1 means the last element.
@@ -90,3 +90,5 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra);
+
+*/
