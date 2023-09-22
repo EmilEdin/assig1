@@ -21,14 +21,13 @@ ioopm_list_t *ioopm_linked_list_create(void)
     return new_link;
 }
 
-void ioopm_linked_list_destroy(ioopm_list_t *list)
-{
-    ioopm_list_t *next_l = list;
-    do {
-        next_l = next_l->next;
-        free(list); 
+
+void ioopm_linked_list_destroy(ioopm_list_t *list) {
+    ioopm_list_t *next = list->next;
+    free(list);
+    if (next != NULL) {
+        ioopm_linked_list_destroy(next);
     }
-    while(list != NULL);
 }
 
 void ioopm_linked_list_append(ioopm_list_t *list, int value)
@@ -39,20 +38,21 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value)
     ioopm_list_t *next_l = list;
 
     // Byt till size of list senare
-    while(new_link->next != NULL) {
+    while (next_l->next != NULL) {
         next_l = next_l->next;
     }
     next_l->next = new_link;
 }
 
-void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
+void ioopm_linked_list_prepend(ioopm_list_t **list, int value)
 {
     ioopm_list_t *new_link = ioopm_linked_list_create();
     new_link->element = value;
-    new_link->next = list;
-    list = new_link;
+    new_link->next = *list; 
+    *list = new_link;
 }
 
+/*
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
 {
     ioopm_list_t *new_link = ioopm_linked_list_create();
@@ -61,7 +61,8 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
     if (index == 0) {
         new_link->next = next_l;
     } else if (index )
-     else {
+    
+    }else {
         do {
             next_l = next_l->next;
         }
@@ -69,3 +70,4 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
         new_link->next = next_l;
     }
 }
+*/

@@ -22,7 +22,7 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value);
 /// @brief Insert at the front of a linked list in O(1) time
 /// @param list the linked list that will be prepended to
 /// @param value the value to be prepended
-void ioopm_linked_list_prepend(ioopm_list_t *list, int value);
+void ioopm_linked_list_prepend(ioopm_list_t **list, int value);
 
 /// @brief Insert an element into a linked list in O(n) time.
 /// The valid values of index are [0,n] for a list of n elements,
