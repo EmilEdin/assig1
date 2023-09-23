@@ -55,7 +55,7 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value)
     new_link->next = NULL;
     // Increment size by one
     list->size = list->size + 1;
-    if (list->last == NULL) {
+    if (list->last == NULL && list->first == NULL) {
         // TODO: ska man uppdatera first också till new_link? Svar: Det hjälper att göra så när man använder list_destroy.
         list->first = new_link;
         list->last = new_link;
@@ -94,7 +94,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value) {
         ioopm_linked_list_append(list, value);
     } else {
         ioopm_link_t *linked_link = list->first;
-        while (counter != index - 1) {
+        while (counter != index - 1 && index != 1) {
             linked_link = linked_link->next;
             counter = counter + 1;
         }
@@ -107,4 +107,67 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value) {
     }
 }
 
+bool ioopm_linked_list_is_empty(ioopm_list_t *list) {
+    return list->size == 0;
+}
+
+bool ioopm_linked_list_contains(ioopm_list_t *list, int element) {
+    ioopm_link_t *linked_list = list->first;
+    for (int i = 0; i < list->size; i++) {
+        if (linked_list->element == element) {
+            return true;
+        } else {
+            linked_list = linked_list->next;
+        }
+    }
+    return false;
+}
+
+int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
+    int counter = 1;
+    if (index == 0) { // (When we want to remove the first element in the list)
+        // We move the pointer of the first element to the next element in the list 
+        // And free the removed elements memory and return it's value
+        ioopm_link_t *free_the_struct1 = list->first;
+        list->first = list->first->next;
+        int removed_first_element = free_the_struct1->element;
+        free(free_the_struct1);
+        list->size = list->size - 1;
+        return removed_first_element;
+
+    } else if (list->size - 1 == index) { // (When we want to remove the last element in the list)
+        // We move the pointer of the last element to the previous element in the list by iterating to the penultimate element
+        // And free the removed elements memory and return it's value
+        ioopm_link_t *free_the_struct = list->last;
+        ioopm_link_t *next_link = list->first;
+        list->size = list->size - 1;
+
+        while (counter != list->size) {
+            next_link = next_link->next;
+            counter = counter + 1;
+        }
+        list->last = next_link;
+        next_link->next = NULL;
+        int removed_last_element = free_the_struct->element;
+        free(free_the_struct);
+        return removed_last_element;
+
+    } else { 
+        // We find the previous element and point it's next pointer to the element after the intented removed element
+        // And free the removed elements memory and return it's value
+        ioopm_link_t *linked_list = list->first;
+        counter = counter - 1;
+        while (counter != index - 1) {
+            linked_list = linked_list->next;
+            counter = counter + 1;
+        }
+        ioopm_link_t *free_the_struct2 = linked_list->next;
+        linked_list->next = linked_list->next->next;
+        
+        list->size = list->size - 1;
+        int removed_element = free_the_struct2->element;
+        free(free_the_struct2);
+        return removed_element;
+    }
+}
 
