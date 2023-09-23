@@ -6,6 +6,7 @@
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 
+
 /// @brief Creates a new empty list
 /// @return an empty linked list
 ioopm_list_t *ioopm_linked_list_create(void);
@@ -22,7 +23,7 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value);
 /// @brief Insert at the front of a linked list in O(1) time
 /// @param list the linked list that will be prepended to
 /// @param value the value to be prepended
-void ioopm_linked_list_prepend(ioopm_list_t **list, int value);
+void ioopm_linked_list_prepend(ioopm_list_t *list, int value);
 
 /// @brief Insert an element into a linked list in O(n) time.
 /// The valid values of index are [0,n] for a list of n elements,
@@ -32,6 +33,12 @@ void ioopm_linked_list_prepend(ioopm_list_t **list, int value);
 /// @param index the position in the list
 /// @param value the value to be inserted 
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value);
+
+/// @brief Lookup the number of elements in the linked list in O(1) time
+/// @param list the linked list
+/// @return the number of elements in the list
+int ioopm_linked_list_size(ioopm_list_t *list);
+
 /*
 /// @brief Remove an element from a linked list in O(n) time.
 /// The valid values of index are [0,n-1] for a list of n elements,
@@ -55,10 +62,6 @@ int ioopm_linked_list_get(ioopm_list_t *list, int index);
 /// @return true if element is in the list, else false
 bool ioopm_linked_list_contains(ioopm_list_t *list, int element);
 
-/// @brief Lookup the number of elements in the linked list in O(1) time
-/// @param list the linked list
-/// @return the number of elements in the list
-int ioopm_linked_list_size(ioopm_list_t *list);
 
 /// @brief Test whether a list is empty or not
 /// @param list the linked list

@@ -2,13 +2,21 @@
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 
-typedef int elem_t;
-typedef struct list ioopm_list_t;
-struct list 
 
+typedef struct list ioopm_list_t;
+typedef struct link ioopm_link_t;
+
+struct link
 {
-  elem_t element;
-  ioopm_list_t *next;
+    int element;
+    ioopm_link_t *next;
+};
+
+struct list
+{
+    ioopm_link_t *first;
+    ioopm_link_t *last;
+    int size;
 };
 
 
@@ -27,8 +35,9 @@ int clean_suite(void) {
 void test_create_list(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
-    CU_ASSERT_PTR_NULL(new_list->next);
-    CU_ASSERT_EQUAL(new_list->element, 0);
+    CU_ASSERT_PTR_NULL(new_list->first);
+    CU_ASSERT_PTR_NULL(new_list->last);
+
     ioopm_linked_list_destroy(new_list);
 }
 
@@ -36,11 +45,10 @@ void test_create_list(void)
 void test_destroy_list(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
-    new_list->element = 1;
-    
+
     ioopm_linked_list_append(new_list, 2);
     ioopm_linked_list_append(new_list, 3);
-    CU_ASSERT_PTR_NOT_NULL(new_list->next);
+    CU_ASSERT_PTR_NOT_NULL(new_list->last);
     // Måste vara remove function
    // ioopm_linked_list_destroy(new_list);
    // CU_ASSERT_PTR_NULL(new_list);
@@ -50,28 +58,57 @@ void test_destroy_list(void)
 void test_append_link(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
-    new_list->element = 1;
 
     ioopm_linked_list_append(new_list, 2);
 
-    CU_ASSERT_EQUAL(new_list->next->element, 2);
+    CU_ASSERT_EQUAL(new_list->last->element, 2);
 
     ioopm_linked_list_destroy(new_list);
-    free(new_list);
 }
 
 void test_prepend_link(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
-    new_list->element = 1;
     
-    ioopm_linked_list_prepend(&new_list, 2);
-    CU_ASSERT_EQUAL(new_list->element, 2);
+    ioopm_linked_list_prepend(new_list, 2);
+    CU_ASSERT_EQUAL(new_list->first->element, 2);
+    ioopm_linked_list_prepend(new_list, 5);
+    CU_ASSERT_EQUAL(new_list->first->element, 5);
+    ioopm_linked_list_prepend(new_list, 1239013);
+    CU_ASSERT_EQUAL(new_list->first->element, 1239013);
 
     ioopm_linked_list_destroy(new_list);
-    free(new_list);
 }
 
+void test_insert_link(void) {
+  ioopm_list_t *new_list = ioopm_linked_list_create();
+    
+    ioopm_linked_list_prepend(new_list, 2);
+    ioopm_linked_list_prepend(new_list, 5);
+    ioopm_linked_list_prepend(new_list, 124);
+    // Checks that inserting at before first and after last element works.
+    ioopm_linked_list_insert(new_list, 0, 69);
+    CU_ASSERT_EQUAL(new_list->first->element, 69);
+    ioopm_linked_list_insert(new_list, ioopm_linked_list_size(new_list), 100);
+    CU_ASSERT_EQUAL(new_list->last->element, 100);
+
+    ioopm_linked_list_insert(new_list, 2, 1337);
+    CU_ASSERT_EQUAL(new_list->first->next->element, 1337);
+
+
+    ioopm_linked_list_destroy(new_list);
+}
+
+void test_size_list(void) {
+  ioopm_list_t *new_list = ioopm_linked_list_create();
+    
+  for (int i = 0; i < 20; i++) {
+    ioopm_linked_list_prepend(new_list, i);
+  }
+  CU_ASSERT_EQUAL(new_list->size, 20);
+
+  ioopm_linked_list_destroy(new_list);
+}
 
 
 
@@ -100,6 +137,8 @@ int main() {
     (CU_add_test(my_test_suite, "Test for destroy_list functionality", test_destroy_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for append_link functionality", test_append_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for insert_link functionality", test_insert_link) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for size_link functionality", test_size_list) == NULL) ||
     0
   )
     {
