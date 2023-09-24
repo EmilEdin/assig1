@@ -110,6 +110,18 @@ void test_size_list(void) {
   ioopm_linked_list_destroy(new_list);
 }
 
+void test_get_link(void)
+{
+    ioopm_list_t *new_list = ioopm_linked_list_create();
+    
+    ioopm_linked_list_append(new_list, 2);
+    ioopm_linked_list_append(new_list, 5);
+    ioopm_linked_list_append(new_list, 124);
+
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(new_list, 2), 124)
+
+    ioopm_linked_list_destroy(new_list);
+}
 
 
 
@@ -139,6 +151,7 @@ int main() {
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insert_link functionality", test_insert_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for size_link functionality", test_size_list) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for get_link functionality", test_get_link) == NULL) ||
     0
   )
     {

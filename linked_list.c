@@ -107,4 +107,14 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value) {
     }
 }
 
+int ioopm_linked_list_get(ioopm_list_t *list, int index)
+{
+    int counter = index;
+    ioopm_link_t *list_itr = list->first;
+    while(counter != 0) {
+        list_itr = list_itr->next;
+        counter--;
+    }
+    return list_itr->element;
+} 
 
