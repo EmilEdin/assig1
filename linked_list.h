@@ -81,45 +81,6 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, int element);
 /// @return the value at the given position
 int ioopm_linked_list_get(ioopm_list_t *list, int index);
 
-<<<<<<< HEAD
-// /// @brief Test if an element is in the list
-// /// @param list the linked list
-// /// @param element the element sought
-// /// @return true if element is in the list, else false
-// bool ioopm_linked_list_contains(ioopm_list_t *list, int element);
-
-
-// /// @brief Test whether a list is empty or not
-// /// @param list the linked list
-// /// @return true if the number of elements int the list is 0, else false
-// bool ioopm_linked_list_is_empty(ioopm_list_t *list);
-
-// /// @brief Remove all elements from a linked list
-// /// @param list the linked list
-// void ioopm_linked_list_clear(ioopm_list_t *list);
-
-// /// @brief Test if a supplied property holds for all elements in a list.
-// /// The function returns as soon as the return value can be determined.
-// /// @param list the linked list
-// /// @param prop the property to be tested (function pointer)
-// /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of prop
-// /// @return true if prop holds for all elements in the list, else false
-// bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra);
-
-// /// @brief Test if a supplied property holds for any element in a list.
-// /// The function returns as soon as the return value can be determined.
-// /// @param list the linked list
-// /// @param prop the property to be tested
-// /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of prop
-// /// @return true if prop holds for any elements in the list, else false
-// bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra);
-
-// /// @brief Apply a supplied function to all elements in a list.
-// /// @param list the linked list
-// /// @param fun the function to be applied
-// /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
-// void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra);
-=======
 /// @brief Remove all elements from a linked list
 /// @param list the linked list
 void ioopm_linked_list_clear(ioopm_list_t *list);
@@ -145,5 +106,4 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra);
->>>>>>> aec833b904ea903d1a83570f20ac9614528503cc
 
