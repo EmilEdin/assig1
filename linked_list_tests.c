@@ -197,13 +197,10 @@ int main() {
     (CU_add_test(my_test_suite, "Test for append_link functionality", test_append_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insert_link functionality", test_insert_link) == NULL) ||
-<<<<<<< HEAD
     (CU_add_test(my_test_suite, "Test for size_link functionality", test_size_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for get_link functionality", test_get_link) == NULL) ||
-=======
     (CU_add_test(my_test_suite, "Test for size_n_empty_link functionality", test_size_n_empty_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for remove_link functionality", test_remove_element_from_list) == NULL) ||
->>>>>>> aec833b904ea903d1a83570f20ac9614528503cc
     0
   )
     {
