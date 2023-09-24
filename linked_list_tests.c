@@ -60,8 +60,13 @@ void test_append_link(void)
     ioopm_list_t *new_list = ioopm_linked_list_create();
 
     ioopm_linked_list_append(new_list, 2);
-
     CU_ASSERT_EQUAL(new_list->last->element, 2);
+    ioopm_linked_list_append(new_list, 10);
+    ioopm_linked_list_append(new_list, 9);
+    ioopm_linked_list_append(new_list, 6);
+    CU_ASSERT_EQUAL(new_list->last->element, 6);
+    CU_ASSERT_EQUAL(new_list->first->element, 2);
+    CU_ASSERT_EQUAL(new_list->first->next->element, 10);
 
     ioopm_linked_list_destroy(new_list);
 }
@@ -94,14 +99,19 @@ void test_insert_link(void) {
 
     ioopm_linked_list_insert(new_list, 2, 1337);
     CU_ASSERT_EQUAL(new_list->first->next->element, 1337);
-
+    
+    int size = ioopm_linked_list_size(new_list);
+    for (int i = 0; i < size; i++) {
+      ioopm_linked_list_insert(new_list, i, i*i);
+    }
 
     ioopm_linked_list_destroy(new_list);
 }
 
-void test_size_list(void) {
+void test_size_n_empty_list(void) {
   ioopm_list_t *new_list = ioopm_linked_list_create();
-    
+  bool is_empty = ioopm_linked_list_is_empty(new_list);
+  CU_ASSERT_TRUE(is_empty);
   for (int i = 0; i < 20; i++) {
     ioopm_linked_list_prepend(new_list, i);
   }
@@ -122,6 +132,43 @@ void test_get_link(void)
 
     ioopm_linked_list_destroy(new_list);
 }
+void test_remove_element_from_list(void) {
+  ioopm_list_t *new_list = ioopm_linked_list_create();
+  ioopm_linked_list_prepend(new_list, 1);
+  ioopm_linked_list_prepend(new_list, 100);
+  ioopm_linked_list_prepend(new_list, 69);
+  ioopm_linked_list_prepend(new_list, 420);
+  ioopm_linked_list_prepend(new_list, 3);
+  ioopm_linked_list_prepend(new_list, 20);
+  
+  // Tests for removing first element
+  int removed_first_element = ioopm_linked_list_remove(new_list, 0);
+  CU_ASSERT_EQUAL(removed_first_element, 20); // Ensure that the removed element is 20
+  CU_ASSERT_EQUAL(new_list->first->element, 3);
+  CU_ASSERT_EQUAL(new_list->last->element, 1);
+  // Tests for removing last element
+  int remove_last_element = new_list->size - 1;
+  int removed_last_element = ioopm_linked_list_remove(new_list, remove_last_element);
+  CU_ASSERT_EQUAL(removed_last_element, 1);
+  CU_ASSERT_EQUAL(new_list->last->element, 100);
+  // Tests for removing element in the middle
+  int removed_element = ioopm_linked_list_remove(new_list, 2);
+  CU_ASSERT_EQUAL(removed_element, 69);
+  // Check that the rest of the elements are in the list and in same order
+  CU_ASSERT_EQUAL(new_list->first->element, 3);
+  CU_ASSERT_EQUAL(new_list->first->next->element, 420);
+  CU_ASSERT_EQUAL(new_list->last->element, 100);
+
+  int another_removed_element = ioopm_linked_list_remove(new_list, 1);
+  CU_ASSERT_EQUAL(another_removed_element, 420);
+  // Check that the rest of the elements are in the list and in same order
+  CU_ASSERT_EQUAL(new_list->first->element, 3);
+  CU_ASSERT_EQUAL(new_list->first->next->element, 100);
+  CU_ASSERT_EQUAL(new_list->last->element, 100);
+
+  ioopm_linked_list_destroy(new_list);
+}
+
 
 
 
@@ -150,8 +197,13 @@ int main() {
     (CU_add_test(my_test_suite, "Test for append_link functionality", test_append_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insert_link functionality", test_insert_link) == NULL) ||
+<<<<<<< HEAD
     (CU_add_test(my_test_suite, "Test for size_link functionality", test_size_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for get_link functionality", test_get_link) == NULL) ||
+=======
+    (CU_add_test(my_test_suite, "Test for size_n_empty_link functionality", test_size_n_empty_list) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for remove_link functionality", test_remove_element_from_list) == NULL) ||
+>>>>>>> aec833b904ea903d1a83570f20ac9614528503cc
     0
   )
     {
