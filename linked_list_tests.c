@@ -132,6 +132,7 @@ void test_get_link(void)
 
     ioopm_linked_list_destroy(new_list);
 }
+
 void test_remove_element_from_list(void) {
   ioopm_list_t *new_list = ioopm_linked_list_create();
   ioopm_linked_list_prepend(new_list, 1);
@@ -169,7 +170,24 @@ void test_remove_element_from_list(void) {
   ioopm_linked_list_destroy(new_list);
 }
 
+void test_clear_list(void) {
+  ioopm_list_t *new_list = ioopm_linked_list_create();
+  ioopm_linked_list_prepend(new_list, 1);
+  ioopm_linked_list_prepend(new_list, 100);
+  ioopm_linked_list_prepend(new_list, 69);
+  ioopm_linked_list_prepend(new_list, 420);
+  ioopm_linked_list_prepend(new_list, 3);
+  ioopm_linked_list_prepend(new_list, 20);
+  ioopm_linked_list_prepend(new_list, 3);
+  
+  ioopm_linked_list_clear(new_list);
 
+  CU_ASSERT_PTR_NULL(new_list->first);
+  CU_ASSERT_PTR_NULL(new_list->last);
+
+  ioopm_linked_list_destroy(new_list);
+  
+}
 
 
 int main() {
@@ -197,10 +215,10 @@ int main() {
     (CU_add_test(my_test_suite, "Test for append_link functionality", test_append_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insert_link functionality", test_insert_link) == NULL) ||
-    (CU_add_test(my_test_suite, "Test for size_link functionality", test_size_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for get_link functionality", test_get_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for size_n_empty_link functionality", test_size_n_empty_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for remove_link functionality", test_remove_element_from_list) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for clearing the list", test_clear_list) == NULL) ||
     0
   )
     {

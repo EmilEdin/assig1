@@ -111,7 +111,7 @@ int ioopm_linked_list_get(ioopm_list_t *list, int index)
 {
     int counter = index;
     ioopm_link_t *list_itr = list->first;
-    while(counter != 0) {
+    while (counter != 0) {
         list_itr = list_itr->next;
         counter--;
     }
@@ -135,7 +135,7 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, int element) {
 
 int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
     int counter = 1;
-    if (index == 0) { // (When we want to remove the first element in the list)
+    if (index == 0 && list->first->next != NULL) { // (When we want to remove the first element in the list)
         // We move the pointer of the first element to the next element in the list 
         // And free the removed elements memory and return it's value
         ioopm_link_t *free_the_struct1 = list->first;
@@ -148,6 +148,16 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
     } else if (list->size - 1 == index) { // (When we want to remove the last element in the list)
         // We move the pointer of the last element to the previous element in the list by iterating to the penultimate element
         // And free the removed elements memory and return it's value
+       if (list->first->next == NULL) {
+        int removed_final_element = list->first->element;
+        ioopm_link_t *free_the_struct1 = list->first;
+        list->first = NULL;
+        list->last = NULL;
+        free(free_the_struct1);
+        
+        return removed_final_element;    
+       }
+
         ioopm_link_t *free_the_struct = list->last;
         ioopm_link_t *next_link = list->first;
         list->size = list->size - 1;
@@ -181,3 +191,13 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
     }
 }
 
+void ioopm_linked_list_clear(ioopm_list_t *list) {
+    int size = list->size;
+    for (int i = 0; i < size; i++) {
+        ioopm_linked_list_remove(list, 0);
+    }
+}
+
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) {
+    
+}
