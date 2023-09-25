@@ -202,7 +202,7 @@ void test_linked_list_all(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
 
-     CU_ASSERT_TRUE(ioopm_linked_list_all(new_list, is_even, new_list));
+    CU_ASSERT_TRUE(ioopm_linked_list_all(new_list, is_even, new_list));
 
     ioopm_linked_list_prepend(new_list, 2);
     ioopm_linked_list_prepend(new_list, 100);
@@ -221,11 +221,11 @@ void test_linked_list_any(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
 
-    CU_ASSERT_TRUE(ioopm_linked_list_any(new_list, is_even, new_list)); 
+    CU_ASSERT_FALSE(ioopm_linked_list_any(new_list, is_even, new_list)); 
 
     ioopm_linked_list_prepend(new_list, 3);
     ioopm_linked_list_prepend(new_list, 15);
-    ioopm_linked_list_prepend(new_list, 68);
+    ioopm_linked_list_prepend(new_list, -68);
 
     CU_ASSERT_TRUE(ioopm_linked_list_any(new_list, is_even, new_list));
 
@@ -237,16 +237,17 @@ void test_linked_list_any(void)
     ioopm_linked_list_destroy(new_list);
 }
 
-void is_even_else_remove(int elem, void *extra) 
+void is_odd_add_one(int elem, void *extra) 
 {
     ioopm_list_t *list = extra;
     ioopm_link_t *link = list->first;
     int size = ioopm_linked_list_size(list); 
+
     if(elem % 2 != 0) {
         for (int i = 0; i < size; i++) {
             if (elem == link->element) {
-                ioopm_linked_list_remove(list, i);
-                break;  
+                link->element++;
+                break;   
             } else {
                 link = link->next;
             }
@@ -258,20 +259,20 @@ void test_linked_list_fun_all(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create();
 
-    ioopm_linked_list_apply_to_all(new_list, is_even_else_remove, new_list); 
+    ioopm_linked_list_apply_to_all(new_list, is_odd_add_one, new_list); 
     CU_ASSERT_TRUE(ioopm_linked_list_all(new_list, is_even, new_list));
 
     ioopm_linked_list_prepend(new_list, 3);
     ioopm_linked_list_prepend(new_list, 15);
     ioopm_linked_list_prepend(new_list, -68);
 
-    ioopm_linked_list_apply_to_all(new_list, is_even_else_remove, new_list);
-    CU_ASSERT_FALSE(ioopm_linked_list_all(new_list, is_even, new_list));
+    ioopm_linked_list_apply_to_all(new_list, is_odd_add_one, new_list);
+    CU_ASSERT_TRUE(ioopm_linked_list_all(new_list, is_even, new_list));
 
-    ioopm_linked_list_prepend(new_list, 0);
+    ioopm_linked_list_prepend(new_list, 2);
     ioopm_linked_list_prepend(new_list, 64);
 
-    ioopm_linked_list_apply_to_all(new_list, is_even_else_remove, new_list);
+    ioopm_linked_list_apply_to_all(new_list, is_odd_add_one, new_list);
     CU_ASSERT_TRUE(ioopm_linked_list_all(new_list, is_even, new_list));
     
     ioopm_linked_list_destroy(new_list);
