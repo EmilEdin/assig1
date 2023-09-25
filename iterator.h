@@ -20,7 +20,7 @@ bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter);
 /// @brief Step the iterator forward one step
 /// @param iter the iterator
 /// @return the next element
-void ioopm_iterator_next(ioopm_list_iterator_t **iter);
+void ioopm_iterator_next(ioopm_list_iterator_t *iter);
 
 // /// NOTE: REMOVE IS OPTIONAL TO IMPLEMENT 
 // /// @brief Remove the current element from the underlying list

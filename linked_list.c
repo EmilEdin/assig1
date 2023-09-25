@@ -263,9 +263,9 @@ ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
   return result; 
 }
 
-void ioopm_iterator_next(ioopm_list_iterator_t **iter)
+void ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
-  (*iter)->current = (*iter)->current->next;
+  iter->current = iter->current->next;
 }
 
 int ioopm_iterator_current(ioopm_list_iterator_t *iter)

@@ -306,11 +306,11 @@ void test_iter_next(void)
     ioopm_linked_list_prepend(new_list, 420);
 
     ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
-    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_next(new_iter);
     CU_ASSERT_EQUAL(new_iter->current->element, 69);
-    ioopm_iterator_next(&new_iter);
-    ioopm_iterator_next(&new_iter);
-    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_next(new_iter);
+    ioopm_iterator_next(new_iter);
+    ioopm_iterator_next(new_iter);
     CU_ASSERT_PTR_NULL(new_iter->current);
 
     ioopm_iterator_destroy(new_iter);
@@ -344,9 +344,9 @@ void test_iter_reset(void)
     ioopm_linked_list_prepend(new_list, 420);
 
     ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
-    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_next(new_iter);
     CU_ASSERT_EQUAL(new_iter->current->element, 69);
-    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_next(new_iter);
     ioopm_iterator_reset(new_iter);
     CU_ASSERT_EQUAL(new_iter->current->element, 420);
 
