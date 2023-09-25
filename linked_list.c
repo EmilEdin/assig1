@@ -1,4 +1,5 @@
 #include "linked_list.h"
+#include "iterator.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -243,3 +244,53 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
         list_itr = list_itr->next;
     }
 }
+
+
+
+struct iter 
+{
+  ioopm_link_t *current;
+  ioopm_list_t *list; /// New field
+};
+
+ioopm_list_iterator_t *list_iterator(ioopm_list_t *list)
+{
+  ioopm_list_iterator_t *result = calloc(1, sizeof(struct iter));
+
+  result->current = list->first;
+  result->list = list; /// Iterator remembers where it came from
+
+  return result; 
+}
+
+void ioopm_iterator_next(ioopm_list_iterator_t **iter)
+{
+  (*iter)->current = (*iter)->current->next;
+}
+
+int ioopm_iterator_current(ioopm_list_iterator_t *iter)
+{
+  return iter->current->element; 
+}
+
+void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
+{
+  free(iter);
+}
+
+void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
+{
+  iter->current = iter->list->first;
+}
+
+// int ioopm_iterator_remove(ioopm_list_iterator_t *iter)
+// {
+//   ioopm_list_iterator_t *to_remove = iter->current; 
+//   int result = to_remove->current->element;
+
+//   iter->current->next = to_remove->current->next; 
+
+//   free(to_remove); 
+
+//   return result;
+// }
