@@ -198,6 +198,46 @@ void ioopm_linked_list_clear(ioopm_list_t *list) {
     }
 }
 
-bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) {
+
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
+{
+    int size = ioopm_linked_list_size(list);
+    ioopm_link_t *list_itr = list->first;
+
+    for (int i = 0; i < size; i++) {
+        if (!prop(list_itr->element, extra)) {
+            return false;   
+        } else {
+            list_itr = list_itr->next;
+        }
+    } 
+    return true;
+}
+
+bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
+{
+    int size = ioopm_linked_list_size(list);
+    ioopm_link_t *list_itr = list->first;
+
+    for (int i = 0; i < size; i++) {
+        if (prop(list_itr->element, extra)) {
+            return true;   
+        } else {
+            list_itr = list_itr->next;
+        }
+    } 
+    return false;
+}
+
+void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) 
+{
+    int size = ioopm_linked_list_size(list); 
+    ioopm_link_t *list_itr = list->first;
+    int counter = 0;
     
+    while (counter != size) {
+        fun(list_itr->element, extra);
+        counter++;
+        list_itr = list_itr->next;
+    }
 }
