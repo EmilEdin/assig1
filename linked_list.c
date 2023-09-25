@@ -234,9 +234,11 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
     int size = ioopm_linked_list_size(list); 
     ioopm_link_t *list_itr = list->first;
     int counter = 0;
+
     
     while (counter != size) {
-        fun(list_itr->element, extra);
+        int *a = &(list_itr->element);
+        fun(a, extra);
         counter++;
         list_itr = list_itr->next;
     }

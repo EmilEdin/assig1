@@ -237,23 +237,19 @@ void test_linked_list_any(void)
     ioopm_linked_list_destroy(new_list);
 }
 
-void is_odd_add_one(int elem, void *extra) 
+void is_odd_add_one(int *elem, void *extra) 
 {
-    ioopm_list_t *list = extra;
-    ioopm_link_t *link = list->first;
-    int size = ioopm_linked_list_size(list); 
-
-    if(elem % 2 != 0) {
-        for (int i = 0; i < size; i++) {
-            if (elem == link->element) {
-                link->element++;
-                break;   
-            } else {
-                link = link->next;
-            }
-        } 
+    if(*elem % 2 != 0) {
+        *elem = *elem + 1;
     }
 }
+
+void multiply_by(int *elem, void *extra)
+{
+    int *plol = extra;
+    *elem = (*elem) * (*plol);
+}
+
 
 void test_linked_list_fun_all(void)
 {
