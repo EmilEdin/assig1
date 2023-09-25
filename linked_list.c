@@ -253,7 +253,7 @@ struct iter
   ioopm_list_t *list; /// New field
 };
 
-ioopm_list_iterator_t *list_iterator(ioopm_list_t *list)
+ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
 {
   ioopm_list_iterator_t *result = calloc(1, sizeof(struct iter));
 

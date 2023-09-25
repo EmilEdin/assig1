@@ -1,4 +1,5 @@
 #include "linked_list.h"
+#include "iterator.h"
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 
@@ -17,6 +18,12 @@ struct list
     ioopm_link_t *first;
     ioopm_link_t *last;
     int size;
+};
+
+struct iter 
+{
+  ioopm_link_t *current;
+  ioopm_list_t *list; /// New field
 };
 
 
@@ -274,6 +281,80 @@ void test_linked_list_fun_all(void)
     ioopm_linked_list_destroy(new_list);
 }
 
+void test_iter_create(void)
+{
+    ioopm_list_t *new_list = ioopm_linked_list_create();
+    ioopm_linked_list_prepend(new_list, 1);
+    ioopm_linked_list_prepend(new_list, 100);
+    ioopm_linked_list_prepend(new_list, 69);
+    ioopm_linked_list_prepend(new_list, 420);
+
+    ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+    CU_ASSERT_EQUAL(new_iter->current->element, 420);
+
+    ioopm_iterator_destroy(new_iter);
+    ioopm_linked_list_destroy(new_list);
+}
+
+void test_iter_next(void)
+{
+    ioopm_list_t *new_list = ioopm_linked_list_create();
+    
+    ioopm_linked_list_prepend(new_list, 1);
+    ioopm_linked_list_prepend(new_list, 100);
+    ioopm_linked_list_prepend(new_list, 69);
+    ioopm_linked_list_prepend(new_list, 420);
+
+    ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+    ioopm_iterator_next(&new_iter);
+    CU_ASSERT_EQUAL(new_iter->current->element, 69);
+    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_next(&new_iter);
+    CU_ASSERT_PTR_NULL(new_iter->current);
+
+    ioopm_iterator_destroy(new_iter);
+    ioopm_linked_list_destroy(new_list);
+}
+
+void test_iter_current(void)
+{
+    ioopm_list_t *new_list = ioopm_linked_list_create();
+    
+    ioopm_linked_list_prepend(new_list, 1);
+    ioopm_linked_list_prepend(new_list, 100);
+    ioopm_linked_list_prepend(new_list, 69);
+    ioopm_linked_list_prepend(new_list, 420);
+
+    ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+    int value = ioopm_iterator_current(new_iter);
+    CU_ASSERT_EQUAL(value, 420);
+
+    ioopm_iterator_destroy(new_iter);
+    ioopm_linked_list_destroy(new_list);
+}
+
+void test_iter_reset(void)
+{
+    ioopm_list_t *new_list = ioopm_linked_list_create();
+    
+    ioopm_linked_list_prepend(new_list, 1);
+    ioopm_linked_list_prepend(new_list, 100);
+    ioopm_linked_list_prepend(new_list, 69);
+    ioopm_linked_list_prepend(new_list, 420);
+
+    ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+    ioopm_iterator_next(&new_iter);
+    CU_ASSERT_EQUAL(new_iter->current->element, 69);
+    ioopm_iterator_next(&new_iter);
+    ioopm_iterator_reset(new_iter);
+    CU_ASSERT_EQUAL(new_iter->current->element, 420);
+
+    ioopm_iterator_destroy(new_iter);
+    ioopm_linked_list_destroy(new_list);
+}
+
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -306,6 +387,11 @@ int main() {
     (CU_add_test(my_test_suite, "Test for linked_list_all functionality", test_linked_list_all) == NULL) ||
     (CU_add_test(my_test_suite, "Test for linked_list_any functionality", test_linked_list_any) == NULL) ||
     (CU_add_test(my_test_suite, "Test for apply_to_all functionality", test_linked_list_fun_all) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Test for iter_create functionality", test_iter_create) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for iter_next functionality", test_iter_next) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for iter_current functionality", test_iter_current) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for iter_reset functionality", test_iter_reset) == NULL) ||
     0
   )
     {
