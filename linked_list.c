@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include "string.h"
 
-typedef struct link ioopm_link_t;
 
 struct link
 {
@@ -18,7 +17,7 @@ struct list
 {
     ioopm_link_t *first;
     ioopm_link_t *last;
-    int size; // Added field to store the number of elements in the linked list.
+    size_t size; // Added field to store the number of elements in the linked list.
 };
 
 ioopm_list_t *ioopm_linked_list_create(void)
@@ -43,8 +42,8 @@ void ioopm_linked_list_destroy(ioopm_list_t *list) {
     if (list->first == NULL && list->last == NULL) {
         free(list);
     } else {
-    links_destroy(list->first);
-    free(list);
+        links_destroy(list->first);
+        free(list);
     }
 }
 
@@ -85,7 +84,7 @@ int ioopm_linked_list_size(ioopm_list_t *list) {
 }
 
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value) {
-    int length = ioopm_linked_list_size(list);
+    size_t length = ioopm_linked_list_size(list);
     int counter = 1;
     // If we insert at the head of the list
     if (index == 0) {
@@ -193,7 +192,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
 }
 
 void ioopm_linked_list_clear(ioopm_list_t *list) {
-    int size = list->size;
+    size_t size = list->size;
     for (int i = 0; i < size; i++) {
         ioopm_linked_list_remove(list, 0);
     }
@@ -202,7 +201,7 @@ void ioopm_linked_list_clear(ioopm_list_t *list) {
 
 bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
 {
-    int size = ioopm_linked_list_size(list);
+    size_t size = ioopm_linked_list_size(list);
     ioopm_link_t *list_itr = list->first;
 
     for (int i = 0; i < size; i++) {
@@ -217,7 +216,7 @@ bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 
 bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
 {
-    int size = ioopm_linked_list_size(list);
+    size_t size = ioopm_linked_list_size(list);
     ioopm_link_t *list_itr = list->first;
 
     for (int i = 0; i < size; i++) {
@@ -232,7 +231,7 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) 
 {
-    int size = ioopm_linked_list_size(list); 
+    size_t size = ioopm_linked_list_size(list); 
     ioopm_link_t *list_itr = list->first;
     int counter = 0;
 

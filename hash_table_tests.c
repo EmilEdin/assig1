@@ -1,4 +1,5 @@
 #include "hash_table.h"
+#include "linked_list.h"
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -143,14 +144,18 @@ void test_hash_table_keys(void) {
   for (int i = 1; i <= 5; i++) {
     ioopm_hash_table_insert(ht, i, "Hej");
   }
-  int *arr = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_link_t *link = linked_list->first;
   for (int index = 0; index < 5; index++) {
     for (int j = 0; j < 5; j++) {
-      if (arr[j] == keys[index]) {
+      if (link->element == keys[index]) {
         found[j] = true;
+        link = linked_list->first;
         break;
       } else if (j == 4) {
         CU_FAIL("Found a key that was never inserted!");
+      } else {
+        link = link->next;
       }
     }
   }

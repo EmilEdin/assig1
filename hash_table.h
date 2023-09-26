@@ -19,6 +19,8 @@
 
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option ioopm_option_t;
+typedef unsigned int size_t;
+
 
 typedef bool(*ioopm_predicate)(int key, char *value, void *extra);
 typedef void(*ioopm_apply_function)(int key, char **value, void *extra);

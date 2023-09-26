@@ -1,4 +1,5 @@
 #include "hash_table.h"
+#include "linked_list.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -165,8 +166,8 @@ ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
   }
 }
 
-int ioopm_hash_table_size(ioopm_hash_table_t *ht) {
-  int counter = 0;
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
+  size_t counter = 0;
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i];
       while (t->next != NULL) {
@@ -199,28 +200,27 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
   }
 }
 
-int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
-  int size = ioopm_hash_table_size(ht);
-  int *arr = calloc(size, sizeof(int));
+  size_t size = ioopm_hash_table_size(ht);
+  ioopm_list_t  *new_list = ioopm_linked_list_create();
   int counter = 0;
   
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
     while (t != NULL) {
-      arr[counter] = t->key;
-      counter++;
+      ioopm_linked_list_append(new_list, t->key);
       t = t->next;
     }
   }
   
-  return arr;
+  return new_list;
 }
 
 
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
-  int size = ioopm_hash_table_size(ht);
+  size_t size = ioopm_hash_table_size(ht);
   char **arr = calloc(1, (sizeof(char*)*size) + sizeof(char*));
   int counter = 0;
   for (int i = 0; i <= No_Buckets; i++) {
@@ -253,7 +253,7 @@ static bool value_equiv(int key_ignored, char *value, void *x)
 
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
-  int size = ioopm_hash_table_size(ht);
+  size_t size = ioopm_hash_table_size(ht);
   int *arr_k = ioopm_hash_table_keys(ht);
   char **arr_v = ioopm_hash_table_values(ht);
   for (int i = 0; i < size; i++) {
@@ -271,7 +271,7 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 
 bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
-  int size = ioopm_hash_table_size(ht);
+  size_t size = ioopm_hash_table_size(ht);
   int *arr_k = ioopm_hash_table_keys(ht);
   char **arr_v = ioopm_hash_table_values(ht);
   for (int i = 0; i < size; i++) {
@@ -297,7 +297,7 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
 
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
 {
-  int size = ioopm_hash_table_size(ht); 
+  size_t size = ioopm_hash_table_size(ht); 
   int *arr_k = ioopm_hash_table_keys(ht);
   char **arr_v = ioopm_hash_table_values(ht);
   for (int i = 0; i < size; i++) {
