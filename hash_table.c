@@ -1,11 +1,10 @@
 #include "hash_table.h"
 #include "linked_list.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
 #include "string.h"
-
+#include <stdio.h>
 #define No_Buckets 17
 
 
@@ -21,6 +20,19 @@ struct entry
 struct hash_table
 {
   entry_t *buckets[No_Buckets];
+};
+
+struct link
+{
+    int element;
+    ioopm_link_t *next;
+};
+
+struct list
+{
+    ioopm_link_t *first;
+    ioopm_link_t *last;
+    size_t size; // Added field to store the number of elements in the linked list.
 };
 
 
@@ -202,9 +214,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
-  size_t size = ioopm_hash_table_size(ht);
   ioopm_list_t  *new_list = ioopm_linked_list_create();
-  int counter = 0;
   
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
@@ -213,7 +223,6 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
       t = t->next;
     }
   }
-  
   return new_list;
 }
 
@@ -221,9 +230,10 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
   size_t size = ioopm_hash_table_size(ht);
-  char **arr = calloc(1, (sizeof(char*)*size) + sizeof(char*));
+  int size_int = size;
+  char **arr = calloc(1, (sizeof(char*)*size_int) + sizeof(char*));
   int counter = 0;
-  for (int i = 0; i <= No_Buckets; i++) {
+  for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
     while (t != NULL) {
       arr[counter] = t->value;
@@ -254,16 +264,18 @@ static bool value_equiv(int key_ignored, char *value, void *x)
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht);
-  int *arr_k = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_link_t *link = linked_list->first;
+
   char **arr_v = ioopm_hash_table_values(ht);
-  for (int i = 0; i < size; i++) {
-    if (!pred(arr_k[i], arr_v[i], arg)) {
-      free(arr_k);
+  for (int i = 0; i < size; link = link->next, i++) {
+    if (!pred(link->element, arr_v[i], arg)) {
+      ioopm_linked_list_destroy(linked_list);
       free(arr_v);
       return false;   
     }
   } 
-  free(arr_k);
+  ioopm_linked_list_destroy(linked_list);
   free(arr_v);
   return true;
 }
@@ -272,16 +284,18 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht);
-  int *arr_k = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_link_t *link = linked_list->first;
+
   char **arr_v = ioopm_hash_table_values(ht);
-  for (int i = 0; i < size; i++) {
-    if (pred(arr_k[i], arr_v[i], arg)) {
-      free(arr_k);
+  for (int i = 0; i < size; link = link->next, i++) {
+    if (pred(link->element, arr_v[i], arg)) {
+      ioopm_linked_list_destroy(linked_list);
       free(arr_v);
       return true;  
     }
   } 
-  free(arr_k);
+  ioopm_linked_list_destroy(linked_list);
   free(arr_v);
   return false;
 }
@@ -298,11 +312,13 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht); 
-  int *arr_k = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_link_t *link = linked_list->first;
+
   char **arr_v = ioopm_hash_table_values(ht);
-  for (int i = 0; i < size; i++) {
-    apply_fun(arr_k[i], arr_v, arg);
+  for (int i = 0; i < size; link = link->next, i++) {
+    apply_fun(link->element, arr_v, arg);
   }
-  free(arr_k);
+  ioopm_linked_list_destroy(linked_list);
   free(arr_v);
 }

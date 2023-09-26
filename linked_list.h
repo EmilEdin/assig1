@@ -1,8 +1,8 @@
 #pragma once
-#include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include "string.h"
+#include <stdlib.h>
 
 /**
  * @file hash_table.h
@@ -16,6 +16,7 @@
  *
  * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
+
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 typedef struct link ioopm_link_t;
@@ -53,7 +54,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value);
 /// @brief Lookup the number of elements in the linked list in O(1) time
 /// @param list the linked list
 /// @return the number of elements in the list
-int ioopm_linked_list_size(ioopm_list_t *list);
+size_t ioopm_linked_list_size(ioopm_list_t *list);
 
 /// @brief Test whether a list is empty or not
 /// @param list the linked list
@@ -111,3 +112,7 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra);
+
+/// @brief Destroy link.
+/// @param link 
+void links_destroy(ioopm_link_t *link);

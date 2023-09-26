@@ -1,7 +1,5 @@
 #include "linked_list.h"
 #include "iterator.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
 #include "string.h"
@@ -29,7 +27,7 @@ ioopm_list_t *ioopm_linked_list_create(void)
     return new_list;
 }
 
-static void links_destroy(ioopm_link_t *link) {
+void links_destroy(ioopm_link_t *link) {
   // Cache the next pointer
   ioopm_link_t *next = link->next;
   free(link);
@@ -79,7 +77,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
     list->size = list->size + 1;
 }
 
-int ioopm_linked_list_size(ioopm_list_t *list) {
+size_t ioopm_linked_list_size(ioopm_list_t *list) {
     return list->size;
 }
 

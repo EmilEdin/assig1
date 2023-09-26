@@ -3,6 +3,7 @@
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct entry entry_t;
 
@@ -12,7 +13,9 @@ struct entry
   char *value;   // holds the value
   entry_t *next; // points to the next entry (possibly NULL)
 };
+
 #define No_Buckets 17
+
 struct hash_table
 {
   entry_t *buckets[No_Buckets];
@@ -25,6 +28,20 @@ struct option
   bool success;
   char *value;
 };
+
+struct link
+{
+    int element;
+    ioopm_link_t *next;
+};
+
+struct list
+{
+    ioopm_link_t *first;
+    ioopm_link_t *last;
+    size_t size; // Added field to store the number of elements in the linked list.
+};
+
 
 int init_suite(void) {
   // Change this function if you want to do something *before* you
@@ -163,7 +180,7 @@ void test_hash_table_keys(void) {
   for (int i = 0; i < 5; i++) {
       CU_ASSERT_TRUE(found[i]);
   }
-  free(arr);
+  ioopm_linked_list_destroy(linked_list);
   ioopm_hash_table_destroy(ht);
 }
 
@@ -179,18 +196,20 @@ void test_hash_table_values(void) {
   ioopm_hash_table_insert(ht, 1, "zero");
   ioopm_hash_table_insert(ht, 99, "ninetynine");
 
-  int *k = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_link_t *link = linked_list->first;
   char **v = ioopm_hash_table_values(ht);
   for (int i = 0; i < 5; i++) {
     for (int j = 0; j < 5; j++) {
-      if (k[i] == keys[j]) {
+      if (link->element == keys[j]) {
         CU_ASSERT_FALSE(strcmp(v[i], values[j]));
         }
       }
+    link = link->next;
     }
-  free(k);
+  
   free(v);
-
+  ioopm_linked_list_destroy(linked_list);
   ioopm_hash_table_destroy(ht);
 }
 
@@ -280,26 +299,28 @@ void test_hash_table_apply_to_all(void) {
 static bool all_function(int key, char *value, void *extra)
 {
   ioopm_hash_table_t *ht = extra;
-  int size = ioopm_hash_table_size(ht); 
-  int *arr_k = ioopm_hash_table_keys(ht);
+  size_t size = ioopm_hash_table_size(ht); 
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_link_t *link = linked_list->first;
+
   char **arr_v = ioopm_hash_table_values(ht);
   int i = 0;
-  for (; i < size; i++) {
-    if (arr_k[i] == key)
+  for (; i < size; link = link->next, i++) {
+    if (link->element == key)
     {
       if (arr_v[i] == value)
       {
-        free(arr_k);
+        ioopm_linked_list_destroy(linked_list);
         free(arr_v);
         return true;
       } else {
-        free(arr_k);
+        ioopm_linked_list_destroy(linked_list);
         free(arr_v);
         return false;
       }
     }
   }
-  free(arr_k);
+  ioopm_linked_list_destroy(linked_list);
   free(arr_v);
   return false;
 }
