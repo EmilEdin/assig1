@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "linked_list.h"
+#include "common.h"
 #include <stdio.h>
 
 /**

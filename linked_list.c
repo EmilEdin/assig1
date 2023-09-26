@@ -1,4 +1,5 @@
 #include "linked_list.h"
+#include "common.h"
 #include "iterator.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -7,7 +8,7 @@
 
 struct link
 {
-    int element;
+    elem_t element;
     ioopm_link_t *next;
 };
 
@@ -16,14 +17,16 @@ struct list
     ioopm_link_t *first;
     ioopm_link_t *last;
     size_t size; // Added field to store the number of elements in the linked list.
+    ioopm_eq_function equal_fun;
 };
 
-ioopm_list_t *ioopm_linked_list_create(void)
+ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function equal_fun)
 {
     ioopm_list_t *new_list = calloc(1, sizeof(ioopm_list_t));
     new_list->first = NULL;
     new_list->last = NULL;
     new_list->size = 0;
+    new_list->equal_fun = equal_fun;
     return new_list;
 }
 
@@ -45,7 +48,7 @@ void ioopm_linked_list_destroy(ioopm_list_t *list) {
     }
 }
 
-void ioopm_linked_list_append(ioopm_list_t *list, int value)
+void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
 {
     ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
     
@@ -63,7 +66,7 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value)
     }
 }
 
-void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
+void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value)
 {
     ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
     new_link->element = value;
@@ -81,7 +84,7 @@ size_t ioopm_linked_list_size(ioopm_list_t *list) {
     return list->size;
 }
 
-void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value) {
+void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value) {
     size_t length = ioopm_linked_list_size(list);
     int counter = 1;
     // If we insert at the head of the list
@@ -105,7 +108,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value) {
     }
 }
 
-int ioopm_linked_list_get(ioopm_list_t *list, int index)
+elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
 {
     int counter = index;
     ioopm_link_t *list_itr = list->first;
@@ -119,10 +122,10 @@ bool ioopm_linked_list_is_empty(ioopm_list_t *list) {
     return list->size == 0;
 }
 
-bool ioopm_linked_list_contains(ioopm_list_t *list, int element) {
+bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element) {
     ioopm_link_t *linked_list = list->first;
     for (int i = 0; i < list->size; i++) {
-        if (linked_list->element == element) {
+        if (list->equal_fun(linked_list->element, element)) {
             return true;
         } else {
             linked_list = linked_list->next;
@@ -131,14 +134,14 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, int element) {
     return false;
 }
 
-int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
+elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index) {
     int counter = 1;
     if (index == 0 && list->first->next != NULL) { // (When we want to remove the first element in the list)
         // We move the pointer of the first element to the next element in the list 
         // And free the removed elements memory and return it's value
         ioopm_link_t *free_the_struct1 = list->first;
         list->first = list->first->next;
-        int removed_first_element = free_the_struct1->element;
+        elem_t removed_first_element = free_the_struct1->element;
         free(free_the_struct1);
         list->size = list->size - 1;
         return removed_first_element;
@@ -147,7 +150,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
         // We move the pointer of the last element to the previous element in the list by iterating to the penultimate element
         // And free the removed elements memory and return it's value
        if (list->first->next == NULL) {
-        int removed_final_element = list->first->element;
+        elem_t removed_final_element = list->first->element;
         ioopm_link_t *free_the_struct1 = list->first;
         list->first = NULL;
         list->last = NULL;
@@ -166,7 +169,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
         }
         list->last = next_link;
         next_link->next = NULL;
-        int removed_last_element = free_the_struct->element;
+        elem_t removed_last_element = free_the_struct->element;
         free(free_the_struct);
         return removed_last_element;
 
@@ -183,7 +186,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index) {
         linked_list->next = linked_list->next->next;
         
         list->size = list->size - 1;
-        int removed_element = free_the_struct2->element;
+        elem_t removed_element = free_the_struct2->element;
         free(free_the_struct2);
         return removed_element;
     }

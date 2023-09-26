@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include "common.h"
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 typedef struct iter ioopm_list_iterator_t;

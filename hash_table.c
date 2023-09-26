@@ -1,5 +1,7 @@
 #include "hash_table.h"
 #include "linked_list.h"
+#include "linked_list.c"
+#include "common.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
@@ -20,19 +22,6 @@ struct entry
 struct hash_table
 {
   entry_t *buckets[No_Buckets];
-};
-
-struct link
-{
-    int element;
-    ioopm_link_t *next;
-};
-
-struct list
-{
-    ioopm_link_t *first;
-    ioopm_link_t *last;
-    size_t size; // Added field to store the number of elements in the linked list.
 };
 
 

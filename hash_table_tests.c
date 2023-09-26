@@ -1,5 +1,6 @@
 #include "hash_table.h"
 #include "linked_list.h"
+#include "common.h"
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -73,7 +74,7 @@ void test_insert_once()
   // TODO: Test when insert and lookup are given a negative integer.
   
   // Checks that insert works combined with lookup.
-  ioopm_hash_table_insert(ht, 6, "Hej");
+  ioopm_int_str_ht_insert(ht, 6, "Hej");
   ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, 6);
   char *struct_value_of_test = struct_test.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test);
@@ -87,13 +88,13 @@ void test_insert_once()
   char *struct_value_of_removed_struct = removed_struct.value;
   CU_ASSERT_PTR_NULL(struct_value_of_removed_struct);
   // Checks that inserts works for negative integer values for key.
-  ioopm_hash_table_insert(ht, -1, "Hej");
+  ioopm_int_str_ht_insert(ht, -1, "Hej");
   ioopm_option_t negative_test = ioopm_hash_table_lookup(ht, -1);
   char *test_negative_key = negative_test.value;
   CU_ASSERT_PTR_NOT_NULL(test_negative_key);
   ioopm_hash_table_remove(ht, -1);
   // Checks that inserts works for zero key
-  ioopm_hash_table_insert(ht, 0, "ju8emjihuj766hui");
+  ioopm_int_str_ht_insert(ht, 0, "ju8emjihuj766hui");
   ioopm_option_t zero_test = ioopm_hash_table_lookup(ht, 0);
   char *test_zero_key = zero_test.value;
   CU_ASSERT_PTR_NOT_NULL(test_zero_key);
@@ -109,7 +110,7 @@ void test_hash_table_size(void)
    CU_ASSERT_EQUAL(0, empty_hash_table);
 
   // Checks that size of hashtable is one.
-  ioopm_hash_table_insert(ht, -6, "Hej");
+  ioopm_int_str_ht_insert(ht, -6, "Hej");
   int one_entry = ioopm_hash_table_size(ht);
   CU_ASSERT_EQUAL(1, one_entry);
   ioopm_hash_table_remove(ht, -6);
@@ -117,7 +118,7 @@ void test_hash_table_size(void)
   // Checks that size of hashtable is the_size
   int the_size = 5;
   for (int i = 1; i <= 5; i++) {
-    ioopm_hash_table_insert(ht, i, "Hello");
+    ioopm_int_str_ht_insert(ht, i, "Hello");
   }
   int five_entries = ioopm_hash_table_size(ht);
   CU_ASSERT_EQUAL(the_size, five_entries);
@@ -134,7 +135,7 @@ void test_hash_table_empty(void)
   CU_ASSERT_TRUE(empty);
 
   // Check if hashtable with one entry is not empty
-  ioopm_hash_table_insert(ht, 6, "Hej");
+  ioopm_int_str_ht_insert(ht, 6, "Hej");
   bool one_element = ioopm_hash_table_is_empty(ht);
   CU_ASSERT_FALSE(one_element);
 
@@ -145,7 +146,7 @@ void test_hash_table_clear(void)
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
 
-  ioopm_hash_table_insert(ht, 6, "Hej");
+  ioopm_int_str_ht_insert(ht, 6, "Hej");
   ioopm_hash_table_clear(ht);
   entry_t *t = ht->buckets[6]->next;
   CU_ASSERT_PTR_NULL(t);
@@ -159,7 +160,7 @@ void test_hash_table_keys(void) {
   int keys[5] = {1, 2, 3, 4, 5};
   bool found[5] = {false, false, false, false, false};
   for (int i = 1; i <= 5; i++) {
-    ioopm_hash_table_insert(ht, i, "Hej");
+    ioopm_int_str_ht_insert(ht, i, "Hej");
   }
   ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
   ioopm_link_t *link = linked_list->first;
@@ -190,11 +191,11 @@ void test_hash_table_values(void) {
   int keys[5] = {3, 10, 42, 1, 99};
   char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
 
-  ioopm_hash_table_insert(ht, 3, "three");
-  ioopm_hash_table_insert(ht, 10, "ten");
-  ioopm_hash_table_insert(ht, 42, "fortytwo");
-  ioopm_hash_table_insert(ht, 1, "zero");
-  ioopm_hash_table_insert(ht, 99, "ninetynine");
+  ioopm_int_str_ht_insert(ht, 3, "three");
+  ioopm_int_str_ht_insert(ht, 10, "ten");
+  ioopm_int_str_ht_insert(ht, 42, "fortytwo");
+  ioopm_int_str_ht_insert(ht, 1, "zero");
+  ioopm_int_str_ht_insert(ht, 99, "ninetynine");
 
   ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
   ioopm_link_t *link = linked_list->first;
@@ -216,11 +217,11 @@ void test_hash_table_values(void) {
 void test_hash_table_has_key(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   
-  ioopm_hash_table_insert(ht, 3, "three");
-  ioopm_hash_table_insert(ht, 10, "ten");
-  ioopm_hash_table_insert(ht, 42, "fortytwo");
-  ioopm_hash_table_insert(ht, 1, "zero");
-  ioopm_hash_table_insert(ht, 99, "ninetynine");
+  ioopm_int_str_ht_insert(ht, 3, "three");
+  ioopm_int_str_ht_insert(ht, 10, "ten");
+  ioopm_int_str_ht_insert(ht, 42, "fortytwo");
+  ioopm_int_str_ht_insert(ht, 1, "zero");
+  ioopm_int_str_ht_insert(ht, 99, "ninetynine");
 
   CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 3));
   CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, 10));
@@ -234,11 +235,11 @@ void test_hash_table_has_key(void) {
 void test_hash_table_has_value(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   
-  ioopm_hash_table_insert(ht, 3, "three");
-  ioopm_hash_table_insert(ht, 10, "ten");
-  ioopm_hash_table_insert(ht, 42, "fortytwo");
-  ioopm_hash_table_insert(ht, 1, "zero");
-  ioopm_hash_table_insert(ht, 99, "ninetynine");
+  ioopm_int_str_ht_insert(ht, 3, "three");
+  ioopm_int_str_ht_insert(ht, 10, "ten");
+  ioopm_int_str_ht_insert(ht, 42, "fortytwo");
+  ioopm_int_str_ht_insert(ht, 1, "zero");
+  ioopm_int_str_ht_insert(ht, 99, "ninetynine");
 
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "three"));
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, "ten"));
@@ -279,11 +280,11 @@ static void remove_even_key_entries(int key, char** value, void *extra) {
 void test_hash_table_apply_to_all(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
 
-  ioopm_hash_table_insert(ht, 3, "three");
-  ioopm_hash_table_insert(ht, 10, "ten");
-  ioopm_hash_table_insert(ht, 42, "fortytwo");
-  ioopm_hash_table_insert(ht, 1, "zero");
-  ioopm_hash_table_insert(ht, 99, "ninetynine");
+  ioopm_int_str_ht_insert(ht, 3, "three");
+  ioopm_int_str_ht_insert(ht, 10, "ten");
+  ioopm_int_str_ht_insert(ht, 42, "fortytwo");
+  ioopm_int_str_ht_insert(ht, 1, "zero");
+  ioopm_int_str_ht_insert(ht, 99, "ninetynine");
 
   ioopm_hash_table_apply_to_all(ht, remove_even_key_entries, ht);
 
@@ -331,11 +332,11 @@ void test_hash_table_all(void)
 
   CU_ASSERT_TRUE(ioopm_hash_table_all(ht, all_function, ht));
 
-  ioopm_hash_table_insert(ht, 3, "three");
-  ioopm_hash_table_insert(ht, 10, "ten");
-  ioopm_hash_table_insert(ht, 42, "fortytwo");
-  ioopm_hash_table_insert(ht, 1, "zero");
-  ioopm_hash_table_insert(ht, 99, "ninetynine");
+  ioopm_int_str_ht_insert(ht, 3, "three");
+  ioopm_int_str_ht_insert(ht, 10, "ten");
+  ioopm_int_str_ht_insert(ht, 42, "fortytwo");
+  ioopm_int_str_ht_insert(ht, 1, "zero");
+  ioopm_int_str_ht_insert(ht, 99, "ninetynine");
 
   CU_ASSERT_TRUE(ioopm_hash_table_all(ht, all_function, ht))
 
