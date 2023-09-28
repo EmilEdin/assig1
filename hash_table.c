@@ -284,22 +284,18 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 }
 
 
-elem_t *ioopm_hash_table_values(ioopm_hash_table_t *ht) 
+ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
-  size_t size = ioopm_hash_table_size(ht);
-  size_t size_int = size;
-  elem_t *arr = calloc(1, (sizeof(char*)*size_int) + sizeof(char*));
-  int counter = 0;
+  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+  
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
     while (t != NULL) {
-      arr[counter] = t->value;
-      counter++;
+      ioopm_linked_list_append(new_list, t->value);
       t = t->next;
     }
   }
-  arr[counter].void_value = NULL;
-  return arr;
+  return new_list;
 }
 
 
@@ -329,22 +325,24 @@ static bool value_equiv(elem_t key_ignored, elem_t value, void *x)
     return value.int_value == other_value;
   }
 }
+
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht);
   ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
   ioopm_link_t *link = linked_list->first;
 
-  elem_t *arr_v = ioopm_hash_table_values(ht);
+  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
+  ioopm_link_t *arr = arr_v->first;
   for (int i = 0; i < size; link = link->next, i++) {
-    if (!pred(link->element, arr_v[i], arg)) {
+    if (!pred(link->element, arr->element, arg)) {
       ioopm_linked_list_destroy(linked_list);
-      free(arr_v);
+      ioopm_linked_list_destroy(arr_v);
       return false;   
     }
   } 
   ioopm_linked_list_destroy(linked_list);
-  free(arr_v);
+  ioopm_linked_list_destroy(arr_v);
   return true;
 }
 
@@ -355,16 +353,17 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
   ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
   ioopm_link_t *link = linked_list->first;
 
-  elem_t *arr_v = ioopm_hash_table_values(ht);
-  for (int i = 0; i < size; link = link->next, i++) {
-    if (pred(link->element, arr_v[i], arg)) {
+  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
+  ioopm_link_t *arr = arr_v->first;
+  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
+    if (pred(link->element, arr->element, arg)) {
       ioopm_linked_list_destroy(linked_list);
-      free(arr_v);
+      ioopm_linked_list_destroy(arr_v);
       return true;  
     }
   } 
   ioopm_linked_list_destroy(linked_list);
-  free(arr_v);
+  ioopm_linked_list_destroy(arr_v);
   return false;
 }
 
@@ -383,10 +382,11 @@ void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function 
   ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
   ioopm_link_t *link = linked_list->first;
 
-  elem_t *arr_v = ioopm_hash_table_values(ht);
-  for (int i = 0; i < size; link = link->next, i++) {
-    apply_fun(link->element, arr_v, arg);
+  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
+  ioopm_link_t *arr = arr_v->first;
+  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
+    apply_fun(link->element, arr->element, arg);
   }
   ioopm_linked_list_destroy(linked_list);
-  free(arr_v);
+  ioopm_linked_list_destroy(arr_v);
 }

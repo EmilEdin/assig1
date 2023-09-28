@@ -5,7 +5,7 @@
 
 
 static bool int_compare(elem_t a, elem_t b) { return a.int_value == b.int_value;}
-static bool string_compare(elem_t a, elem_t b) { return a.string_value == b.string_value;}
+
 
 typedef struct list ioopm_list_t;
 typedef struct link ioopm_link_t;

@@ -25,7 +25,7 @@ typedef struct option ioopm_option_t;
 
 
 typedef bool(*ioopm_predicate)(elem_t key, elem_t value, void *extra);
-typedef void(*ioopm_apply_function)(elem_t key, elem_t *value, void *extra);
+typedef void(*ioopm_apply_function)(elem_t key, elem_t value, void *extra);
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
@@ -69,13 +69,13 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht);
 
 /// @brief return the keys for all entries in a hash map (in no particular order, but same as ioopm_hash_table_values)
 /// @param h hash table operated upon
-/// @return an array of keys for hash table h
+/// @return an linked list of keys for hash table h
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
 
 // /// @brief return the values for all entries in a hash map (in no particular order, but same as ioopm_hash_table_keys)
 // /// @param h hash table operated upon
 /// @return an array of values for hash table h
-elem_t *ioopm_hash_table_values(ioopm_hash_table_t *ht);
+ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht);
 
 /// @brief check if a hash table has an entry with a given key
 /// @param h hash table operated upon

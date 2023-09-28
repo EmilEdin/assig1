@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "string.h"
 typedef struct entry entry_t;
 
 struct entry
@@ -33,7 +33,7 @@ struct option
 
 struct link
 {
-    int element;
+    elem_t element;
     ioopm_link_t *next;
 };
 
@@ -167,7 +167,7 @@ void test_hash_table_keys(void) {
   ioopm_link_t *link = linked_list->first;
   for (int index = 0; index < 5; index++) {
     for (int j = 0; j < 5; j++) {
-      if (link->element == keys[index]) {
+      if (link->element.int_value == keys[index]) {
         found[j] = true;
         link = linked_list->first;
         break;
@@ -199,17 +199,19 @@ void test_hash_table_values(void) {
 
   ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
   ioopm_link_t *link = linked_list->first;
-  elem_t *v = ioopm_hash_table_values(ht);
+  ioopm_list_t *v = ioopm_hash_table_values(ht);
+  ioopm_link_t *v1 = v->first;
   for (int i = 0; i < 5; i++) {
     for (int j = 0; j < 5; j++) {
-      if (link->element == keys[j]) {
-        CU_ASSERT_FALSE(strcmp(v[i].string_value, values[j]));
+      if (link->element.int_value == keys[j]) {
+        CU_ASSERT_FALSE(strcmp(v1->element.string_value, values[j]));
         }
       }
     link = link->next;
+    v1 = v1->next;
     }
   
-  free(v);
+  ioopm_linked_list_destroy(v);
   ioopm_linked_list_destroy(linked_list);
   ioopm_hash_table_destroy(ht);
 }
@@ -247,30 +249,30 @@ void test_hash_table_has_value(void) {
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("zero")));
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("ninetynine")));
   
-  // char *copy_three = strdup("three");
-  // char *copy_ten = strdup("ten");
-  // char *copy_fortytwo = strdup("fortytwo");
-  // char *copy_zero = strdup("zero");
-  // char *copy_ninetynine = strdup("ninetynine");
+  char *copy_three = strdup("three");
+  char *copy_ten = strdup("ten");
+  char *copy_fortytwo = strdup("fortytwo");
+  char *copy_zero = strdup("zero");
+  char *copy_ninetynine = strdup("ninetynine");
 
-  // CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_three)));
-  // CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_ten)));
-  // CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_fortytwo)));
-  // CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_zero)));
-  // CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_ninetynine)));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_three)));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_ten)));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_fortytwo)));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_zero)));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_ninetynine)));
 
-  // free(copy_three);
-  // free(copy_ten);
-  // free(copy_fortytwo);
-  // free(copy_zero);
-  // free(copy_ninetynine);
+  free(copy_three);
+  free(copy_ten);
+  free(copy_fortytwo);
+  free(copy_zero);
+  free(copy_ninetynine);
 
 
   ioopm_hash_table_destroy(ht);
 }
 
-static void remove_even_key_entries(elem_t key, elem_t *value, void *extra) {
-  char *lol = key.string_value;
+static void remove_even_key_entries(elem_t key, elem_t value, void *extra) {
+  //char *lol = key.string_value;
   ioopm_hash_table_t *ht = extra;
   if (key.int_value % 2 == 0) {
     ioopm_hash_table_remove(ht, key);
