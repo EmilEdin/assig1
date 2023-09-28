@@ -111,21 +111,21 @@ static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_functi
       return find_previous_entry_for_key(t1, key, hash);
     }
   } else {
-  entry_t *t1 = entry->next;
-  if (t1 == NULL) {
-    return entry;
-  } else if (hash(t1->key) >= key) {
-    return entry;
-  } else {
-    return find_previous_entry_for_key(t1, key, hash);
-  }
+    entry_t *t1 = entry->next;
+    if (t1 == NULL) {
+      return entry;
+    } else if (hash(t1->key) >= key) {
+      return entry;
+    } else {
+      return find_previous_entry_for_key(t1, key, hash);
+    }
   }
 }
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
   int bucket;
   int int_key;
-  int next_key;
+  elem_t next_key;
   entry_t *entry;
   entry_t *next;
   /// Search for an existing entry for a key
@@ -137,25 +137,26 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     bucket = abs(int_key % No_Buckets);
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
-    next_key = next->key.int_value;
-  }
-else
-  {
-    int_key = ht->hash_fun(key);
-    bucket = abs(int_key % No_Buckets);
-    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-    next = entry->next;
-    next_key = ht->hash_fun(next->key);
-  }
-
-  /// Check if the next entry should be updated or not
-  if (next != NULL && next_key == int_key)
-    {
-      next->value = value;
+    if(next == NULL) {
+      next_key.void_value = NULL;
+    } else {
+      next_key.int_value = next->key.int_value;
     }
+  }
   else
     {
-      entry->next = entry_create(key, value, next);
+      int_key = ht->hash_fun(key);
+      bucket = abs(int_key % No_Buckets);
+      entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+      next = entry->next;
+      next_key.int_value = ht->hash_fun(next->key);
+    }
+
+    /// Check if the next entry should be updated or not
+    if (next != NULL && next_key.int_value == int_key) {
+        next->value = value;
+    } else {
+        entry->next = entry_create(key, value, next);
     }
 }
 
