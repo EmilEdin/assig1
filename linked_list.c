@@ -1,5 +1,4 @@
 #include "linked_list.h"
-#include "common.h"
 #include "iterator.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -238,7 +237,7 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
 
     
     while (counter != size) {
-        int *a = &(list_itr->element);
+        elem_t *a = &(list_itr->element);
         fun(a, extra);
         counter++;
         list_itr = list_itr->next;
@@ -268,7 +267,7 @@ void ioopm_iterator_next(ioopm_list_iterator_t *iter)
   iter->current = iter->current->next;
 }
 
-int ioopm_iterator_current(ioopm_list_iterator_t *iter)
+elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
 {
   return iter->current->element; 
 }

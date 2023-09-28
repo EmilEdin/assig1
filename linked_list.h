@@ -68,7 +68,7 @@ bool ioopm_linked_list_is_empty(ioopm_list_t *list);
 /// where 0 means the first element and n-1 means the last element.
 /// @param list the linked list
 /// @param index the position in the list
-/// @return the value removed
+/// @return the value removed in an element struct
 elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index);
 
 /// @brief Test if an element is in the list
@@ -83,7 +83,7 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element);
 /// where 0 means the first element and n-1 means the last element.
 /// @param list the linked list that will be extended
 /// @param index the position in the list
-/// @return the value at the given position
+/// @return the value at the given position in an element struct
 elem_t ioopm_linked_list_get(ioopm_list_t *list, int index);
 
 

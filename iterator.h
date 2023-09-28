@@ -41,8 +41,8 @@ void ioopm_iterator_reset(ioopm_list_iterator_t *iter);
 
 /// @brief Return the current element from the underlying list
 /// @param iter the iterator
-/// @return the current element
-int ioopm_iterator_current(ioopm_list_iterator_t *iter);
+/// @return the current element struct
+elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter);
 
 /// @brief Destroy the iterator and return its resources
 /// @param iter the iterator
