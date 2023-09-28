@@ -10,8 +10,8 @@ typedef struct entry entry_t;
 
 struct entry
 {
-  int key;       // holds the key
-  char *value;   // holds the value
+  elem_t key;       // holds the key
+  elem_t value;   // holds the value
   entry_t *next; // points to the next entry (possibly NULL)
 };
 
@@ -20,6 +20,7 @@ struct entry
 struct hash_table
 {
   entry_t *buckets[No_Buckets];
+  hash_function hash_fun;
 };
 
 typedef struct option ioopm_option_t;
@@ -43,11 +44,6 @@ struct list
     size_t size; // Added field to store the number of elements in the linked list.
 };
 
-int hash_fun_mod(elem_t key)
-{
-  return int_elem(abs(key.int_value) % No_Buckets);
-}
-
 int init_suite(void) {
   // Change this function if you want to do something *before* you
   // run a test suite
@@ -59,53 +55,54 @@ int clean_suite(void) {
   // run a test suite
   return 0;
 }
+static bool int_compare(elem_t a, elem_t b) { return a.int_value == b.int_value;}
 
 void test_create_destroy(void)
 {
-   ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_mod);
+   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL, int_compare);
    CU_ASSERT_PTR_NOT_NULL(ht);
    ioopm_hash_table_destroy(ht);
 }
 
 void test_insert_once()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_mod);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL, int_compare);
   for (int i = 0; i <= 16; ++i) {
-    ioopm_option_t answer = ioopm_hash_table_lookup(ht, i);
+    ioopm_option_t answer = ioopm_hash_table_lookup(ht, int_elem(i));
     char *struct_value = answer.value;
     CU_ASSERT_PTR_NULL(struct_value);
   }
   // TODO: Test when insert and lookup are given a negative integer.
   
   // Checks that insert works combined with lookup.
-  ioopm_int_str_ht_insert(ht, 6, "Hej");
-  ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, 6);
+  ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
+  ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, int_elem(6));
   char *struct_value_of_test = struct_test.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test);
   // Checks that remove function works combined with lookup.
-  ioopm_option_t remove_test = ioopm_hash_table_remove(ht, 6);
+  ioopm_option_t remove_test = ioopm_hash_table_remove(ht, int_elem(6));
   char *remove = remove_test.value;
   // Remove will return the value string if remove was a success.
   CU_ASSERT_PTR_NOT_NULL(remove);
   // Checks that we removed the entry struct.
-  ioopm_option_t removed_struct = ioopm_hash_table_lookup(ht, 6);
+  ioopm_option_t removed_struct = ioopm_hash_table_lookup(ht, int_elem(6));
   char *struct_value_of_removed_struct = removed_struct.value;
   CU_ASSERT_PTR_NULL(struct_value_of_removed_struct);
   // Checks that inserts works for negative integer values for key.
-  ioopm_int_str_ht_insert(ht, -1, "Hej");
-  ioopm_option_t negative_test = ioopm_hash_table_lookup(ht, -1);
+  ioopm_hash_table_insert(ht, int_elem(-1), ptr_elem("Hej"));
+  ioopm_option_t negative_test = ioopm_hash_table_lookup(ht, int_elem(-1));
   char *test_negative_key = negative_test.value;
   CU_ASSERT_PTR_NOT_NULL(test_negative_key);
-  ioopm_hash_table_remove(ht, -1);
+  ioopm_hash_table_remove(ht, int_elem(-1));
   // Checks that inserts works for zero key
-  ioopm_int_str_ht_insert(ht, 0, "ju8emjihuj766hui");
-  ioopm_option_t zero_test = ioopm_hash_table_lookup(ht, 0);
+  ioopm_hash_table_insert(ht, int_elem(0), ptr_elem("ju8emjihuj766hui"));
+  ioopm_option_t zero_test = ioopm_hash_table_lookup(ht, int_elem(0));
   char *test_zero_key = zero_test.value;
   CU_ASSERT_PTR_NOT_NULL(test_zero_key);
 
  ioopm_hash_table_destroy(ht);
 }
-
+/*
 // void test_hash_table_size(void)
 // {
 //    ioopm_hash_table_t *ht = ioopm_hash_table_create();
@@ -346,7 +343,7 @@ void test_insert_once()
 
 //   ioopm_hash_table_destroy(ht);
 // }
-
+*/
 int main() {
 
   // First we try to set up CUnit, and exit if we fail
@@ -369,7 +366,7 @@ int main() {
   // copy a line below and change the information
   if (
     (CU_add_test(my_test_suite, "Test for create_destroy functionality", test_create_destroy) == NULL) || 
-    // (CU_add_test(my_test_suite, "Test for insert_once functionality", test_insert_once) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for insert_once functionality", test_insert_once) == NULL) ||
     // (CU_add_test(my_test_suite, "Test for size functionality", test_hash_table_size) == NULL) ||
     // (CU_add_test(my_test_suite, "Test for empty functionality", test_hash_table_empty) == NULL) ||
     // (CU_add_test(my_test_suite, "Test for clear functionality", test_hash_table_clear) == NULL) ||

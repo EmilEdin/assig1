@@ -29,7 +29,7 @@ typedef void(*ioopm_apply_function)(elem_t key, elem_t *value, void *extra);
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
-ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun);
+ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_eq_function equal_fun);
 
 /// @brief Delete a hash table and free its memory
 /// @param ht a hash table to be deleted
@@ -45,13 +45,13 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value);
 // /// @param ht hash table operated upon
 // /// @param key key to lookup
 // /// @return a struct which contains the value that the key is mapped to if successful and a success indicator
-// ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
+ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 
 // /// @brief remove any mapping from key to a value
 // /// @param ht hash table operated upon
 // /// @param key key to remove
 // /// @return the value mapped to by key (FIXME: incomplete)
-// ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
+ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
 
 // /// @brief returns the number of key => value entries in the hash table
 // /// @param h hash table operated upon
