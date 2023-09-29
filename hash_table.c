@@ -138,30 +138,46 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     bucket = int_key % No_Buckets;
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
-    if(next == NULL) {
+    if (next == NULL) {
       next_key.void_value = NULL;
     } else {
-      next_key.int_value = next->key.int_value;
+      next_key.int_value = abs(next->key.int_value);
     }
   }
   else
     {
-      int_key = ht->hash_fun(key);
-      bucket = abs(int_key % No_Buckets);
+      int_key = abs(ht->hash_fun(key));
+      bucket = int_key % No_Buckets;
       entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
       next = entry->next;
       if(next == NULL) {
         next_key.void_value = NULL;
       } else {
-        next_key.int_value = ht->hash_fun(next->key);
+        next_key.int_value =abs(ht->hash_fun(next->key));
       }
     }
-
+    
     /// Check if the next entry should be updated or not
-    if (next != NULL && next_key.int_value == int_key) {
+    if (next != NULL) {
+      if (ht->hash_fun == NULL) {
+        if (next_key.int_value == int_key) {
+          next->value = value;
+        } else {
+          key.int_value = abs(key.int_value);
+          entry->next = entry_create(key, value, next);
+        }
+      } else if (next_key.int_value == int_key) {
         next->value = value;
-    } else {
+      } else {
         entry->next = entry_create(key, value, next);
+      } 
+    } else {
+      if (ht->hash_fun == NULL) {
+        key.int_value = abs(key.int_value);
+        entry->next = entry_create(key, value, next);
+      } else {
+        entry->next = entry_create(key, value, next);
+      }
     }
 }
 
