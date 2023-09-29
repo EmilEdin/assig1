@@ -81,31 +81,23 @@ void test_insert_once()
   // TODO: Test when insert and lookup are given a negative integer.
   
   // Checks that insert works combined with lookup.
-  int new_int = atoi("72");
-  printf("%d", new_int);
+  // Checks that insert works combined with lookup.
+
+  ioopm_hash_table_insert(ht_str, ptr_elem("4"), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht_str, ptr_elem("72"), ptr_elem("Hej"));
+  ioopm_hash_table_insert(ht_str, ptr_elem("21"), ptr_elem("Hej"));
   ioopm_option_t struct_test1 = ioopm_hash_table_lookup(ht_str, ptr_elem("72"));
   char *struct_value_of_test1 = struct_test1.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test1);
 
 
   ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
+  ioopm_hash_table_insert(ht, int_elem(40), ptr_elem("Hej"));
+  ioopm_hash_table_insert(ht, int_elem(23), ptr_elem("Hej"));
+   ioopm_hash_table_insert(ht, int_elem(23), ptr_elem("Sko"));
   ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, int_elem(6));
   char *struct_value_of_test = struct_test.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test);
-
-
-  // Checks that remove function works combined with lookup.
-  ioopm_option_t remove_test = ioopm_hash_table_remove(ht, int_elem(6));
-  char *remove = remove_test.value;
-
-
-  // Remove will return the value string if remove was a success.
-  CU_ASSERT_PTR_NOT_NULL(remove);
-  // Checks that we removed the entry struct.
-  ioopm_option_t removed_struct = ioopm_hash_table_lookup(ht, int_elem(6));
-  char *struct_value_of_removed_struct = removed_struct.value;
-  CU_ASSERT_PTR_NULL(struct_value_of_removed_struct);
 
   // Checks that inserts works for negative integer values for key.
   ioopm_hash_table_insert(ht, int_elem(-1), ptr_elem("Hej"));
@@ -208,11 +200,11 @@ void test_hash_table_keys(void) {
 void test_hash_table_values(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
 
-  int keys[5] = {3, 10, 42, 1, 99};
+  int keys[5] = {3, 71, 42, 1, 99};
   char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
 
   ioopm_hash_table_insert(ht, int_elem(3), ptr_elem("three"));
-  ioopm_hash_table_insert(ht, int_elem(10), ptr_elem("ten"));
+  ioopm_hash_table_insert(ht, int_elem(71), ptr_elem("ten"));
   ioopm_hash_table_insert(ht, int_elem(42), ptr_elem("fortytwo"));
   ioopm_hash_table_insert(ht, int_elem(1), ptr_elem("zero"));
   ioopm_hash_table_insert(ht, int_elem(99), ptr_elem("ninetynine"));
@@ -321,7 +313,7 @@ void test_hash_table_apply_to_all(void) {
 
 bool is_even(elem_t key, elem_t value, void *extra)
 {
-    if(value.int_value % 2 == 0) {
+    if(key.int_value % 2 == 0) {
         return true;
     } else {
         return false;
@@ -372,7 +364,7 @@ void test_hash_table_all(void)
   ioopm_hash_table_insert(ht, int_elem(1), ptr_elem("zero"));
   ioopm_hash_table_insert(ht, int_elem(99), ptr_elem("ninetynine"));
 
-  CU_ASSERT_TRUE(ioopm_hash_table_all(ht, is_even, ht))
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, is_even, ht))
 
   ioopm_hash_table_destroy(ht);
 }

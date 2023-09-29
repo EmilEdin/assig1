@@ -199,7 +199,7 @@ else
    }
   else
    {
-     return (ioopm_option_t) { .success = false };
+     return (ioopm_option_t) { .success = false};
    }
 }
 
