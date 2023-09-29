@@ -171,7 +171,7 @@ void test_ht_remove_str_key(void) {
 }
 
 void test_remove_int_key(void) {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(string_to_int);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
 
   ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht, int_elem(40), ptr_elem("Hej"));
