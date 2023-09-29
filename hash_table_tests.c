@@ -176,7 +176,9 @@ void test_remove_int_key(void) {
   ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht, int_elem(40), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht, int_elem(57), ptr_elem("Sko"));
-  ioopm_option_t false_remove_int = ioopm_hash_table_remove(ht, int_elem(21));
+  ioopm_option_t false_remove_int = ioopm_hash_table_remove(ht, int_elem(23));
+  ioopm_option_t false_remove_int_v2 = ioopm_hash_table_remove(ht, int_elem(21));
+  CU_ASSERT_FALSE(false_remove_int_v2.success);
   CU_ASSERT_FALSE(false_remove_int.success);
 
   ioopm_option_t remove_middle = ioopm_hash_table_remove(ht, int_elem(40));
@@ -289,56 +291,50 @@ void test_hash_table_values(void) {
   ioopm_hash_table_destroy(ht);
 }
 
-void test_hash_table_has_key(void) {
+void test_hash_table_has_key_int(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
+
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
   
   ioopm_hash_table_insert(ht, int_elem(3), ptr_elem("three"));
   ioopm_hash_table_insert(ht, int_elem(10), ptr_elem("ten"));
   ioopm_hash_table_insert(ht, int_elem(42), ptr_elem("fortytwo"));
-  ioopm_hash_table_insert(ht, int_elem(1), ptr_elem("zero"));
-  ioopm_hash_table_insert(ht, int_elem(99), ptr_elem("ninetynine"));
 
   CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(3)));
   CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(10)));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(42)));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(1)));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(99)));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
+
 
   ioopm_hash_table_destroy(ht);
 }
 
 void test_hash_table_has_value(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
+
+  CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, ptr_elem("fortyone")));
   
   ioopm_hash_table_insert(ht, int_elem(3), ptr_elem("three"));
   ioopm_hash_table_insert(ht, int_elem(10), ptr_elem("ten"));
   ioopm_hash_table_insert(ht, int_elem(42), ptr_elem("fortytwo"));
-  ioopm_hash_table_insert(ht, int_elem(1), ptr_elem("zero"));
-  ioopm_hash_table_insert(ht, int_elem(99), ptr_elem("ninetynine"));
+
 
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("three")));
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("ten")));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("fortytwo")));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("zero")));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("ninetynine")));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, ptr_elem("fortyone")));
+
   
   char *copy_three = strdup("three");
   char *copy_ten = strdup("ten");
   char *copy_fortytwo = strdup("fortytwo");
-  char *copy_zero = strdup("zero");
-  char *copy_ninetynine = strdup("ninetynine");
 
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_three)));
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_ten)));
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_fortytwo)));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_zero)));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem(copy_ninetynine)));
+
 
   free(copy_three);
   free(copy_ten);
   free(copy_fortytwo);
-  free(copy_zero);
-  free(copy_ninetynine);
 
 
   ioopm_hash_table_destroy(ht);

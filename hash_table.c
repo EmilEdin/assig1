@@ -344,7 +344,10 @@ ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 
 static bool key_equiv(elem_t key, elem_t value_ignored, void *x)
 {
-  if(key.string_value != NULL) {
+   // If x == True, keys are ints, else keys are strings
+  bool int_or_str = x;
+
+  if(int_or_str) {
     elem_t *other_key_ptr = x;
     char *other_key = other_key_ptr->string_value;
     return key.string_value == other_key; 
@@ -357,7 +360,10 @@ static bool key_equiv(elem_t key, elem_t value_ignored, void *x)
 
 static bool value_equiv(elem_t key_ignored, elem_t value, void *x)
 {
-  if(value.string_value != NULL) {
+  // If x == True, keys are ints, else keys are strings
+  bool int_or_str = x;
+
+  if(int_or_str) {
     elem_t *other_value_ptr = x;
     char *other_value = other_value_ptr->string_value;
     return strcmp(value.string_value, other_value) == 0;
@@ -397,8 +403,15 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 
   ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
   ioopm_link_t *arr = arr_v->first;
+  void *extra;
+  if (ht->hash_fun != NULL) {
+    extra = true;
+  } else {
+    extra = false;
+  }
+
   for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-    if (pred(link->element, arr->element, arg)) {
+    if (pred(link->element, arr->element, extra)) {
       ioopm_linked_list_destroy(linked_list);
       ioopm_linked_list_destroy(arr_v);
       return true;  
