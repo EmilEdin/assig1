@@ -139,6 +139,67 @@ void test_hash_table_size(void)
   ioopm_hash_table_destroy(ht);
 }
 
+void test_ht_remove_str_key(void) {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(string_to_int);
+
+  ioopm_hash_table_insert(ht, ptr_elem("4"), ptr_elem("Första"));
+  ioopm_hash_table_insert(ht, ptr_elem("72"), ptr_elem("Andra"));
+  ioopm_hash_table_insert(ht, ptr_elem("89"), ptr_elem("Fjärde"));
+  ioopm_option_t false_remove_str = ioopm_hash_table_remove(ht, ptr_elem("21"));
+  CU_ASSERT_FALSE(false_remove_str.success);
+
+  ioopm_option_t remove_middle = ioopm_hash_table_remove(ht, ptr_elem("72"));
+  ioopm_option_t struct_test_middle = ioopm_hash_table_lookup(ht, ptr_elem("72"));
+  CU_ASSERT_FALSE(struct_test_middle.success);
+  CU_ASSERT_TRUE(remove_middle.success);
+  
+  ioopm_option_t remove_last = ioopm_hash_table_remove(ht, ptr_elem("89"));
+  ioopm_option_t struct_test_last = ioopm_hash_table_lookup(ht, ptr_elem("89"));
+  CU_ASSERT_FALSE(struct_test_last.success);
+  CU_ASSERT_TRUE(remove_last.success);
+
+  ioopm_option_t remove_first = ioopm_hash_table_remove(ht, ptr_elem("4"));
+  ioopm_option_t struct_test_first = ioopm_hash_table_lookup(ht, ptr_elem("4"));
+  CU_ASSERT_FALSE(struct_test_first.success);
+  CU_ASSERT_TRUE(remove_first.success);
+
+
+  ioopm_option_t remove_already_removed = ioopm_hash_table_remove(ht, ptr_elem("4"));
+  CU_ASSERT_FALSE(remove_already_removed.success);
+
+    ioopm_hash_table_destroy(ht);
+}
+
+void test_remove_int_key(void) {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(string_to_int);
+
+  ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
+  ioopm_hash_table_insert(ht, int_elem(40), ptr_elem("Hej"));
+  ioopm_hash_table_insert(ht, int_elem(57), ptr_elem("Sko"));
+  ioopm_option_t false_remove_int = ioopm_hash_table_remove(ht, int_elem(21));
+  CU_ASSERT_FALSE(false_remove_int.success);
+
+  ioopm_option_t remove_middle = ioopm_hash_table_remove(ht, int_elem(40));
+  ioopm_option_t struct_test_middle = ioopm_hash_table_lookup(ht, int_elem(40));
+  CU_ASSERT_FALSE(struct_test_middle.success);
+  CU_ASSERT_TRUE(remove_middle.success);
+
+  ioopm_option_t remove_last = ioopm_hash_table_remove(ht, int_elem(57));
+  ioopm_option_t struct_test_last = ioopm_hash_table_lookup(ht, int_elem(57));
+  CU_ASSERT_FALSE(struct_test_last.success);
+  CU_ASSERT_TRUE(remove_last.success);
+
+  ioopm_option_t remove_first = ioopm_hash_table_remove(ht, int_elem(6));
+  ioopm_option_t struct_test_first = ioopm_hash_table_lookup(ht, int_elem(6));
+  CU_ASSERT_FALSE(struct_test_first.success);
+  CU_ASSERT_TRUE(remove_first.success);
+
+  ioopm_option_t remove_already_removed = ioopm_hash_table_remove(ht, int_elem(6));
+  CU_ASSERT_FALSE(remove_already_removed.success);
+
+  ioopm_hash_table_destroy(ht);
+}
+
 void test_hash_table_empty(void)
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
@@ -393,6 +454,8 @@ int main() {
     (CU_add_test(my_test_suite, "Test for create_destroy functionality", test_create_destroy) == NULL) || 
     (CU_add_test(my_test_suite, "Test for insert_once functionality", test_insert_once) == NULL) ||
     (CU_add_test(my_test_suite, "Test for size functionality", test_hash_table_size) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for remove_str functionality", test_ht_remove_str_key) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for remove_int functionality", test_remove_int_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for empty functionality", test_hash_table_empty) == NULL) ||
     (CU_add_test(my_test_suite, "Test for clear functionality", test_hash_table_clear) == NULL) ||
     (CU_add_test(my_test_suite, "Test for keys functionality", test_hash_table_keys) == NULL) ||

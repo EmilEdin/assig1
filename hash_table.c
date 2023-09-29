@@ -106,7 +106,7 @@ static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_functi
     entry_t *t1 = entry->next;
     if (t1 == NULL) {
       return entry;
-    } else if (t1->key.int_value >= key) {
+    } else if (abs(t1->key.int_value) >= key) {
       return entry;
     } else {
       return find_previous_entry_for_key(t1, key, hash);
@@ -115,7 +115,7 @@ static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_functi
     entry_t *t1 = entry->next;
     if (t1 == NULL) {
       return entry;
-    } else if (hash(t1->key) >= key) {
+    } else if (abs(hash(t1->key)) >= key) {
       return entry;
     } else {
       return find_previous_entry_for_key(t1, key, hash);
@@ -134,8 +134,8 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   if (ht->hash_fun == NULL)
   {
     // treat keys as integers
-    int_key = key.int_value; // .i reads the integer part of the elem_t
-    bucket = abs(int_key % No_Buckets);
+    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
+    bucket = int_key % No_Buckets;
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
     if(next == NULL) {
@@ -179,8 +179,8 @@ ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
   if (ht->hash_fun == NULL)
   {
     // treat keys as integers
-    int_key = key.int_value; // .i reads the integer part of the elem_t
-    bucket = abs(int_key % No_Buckets);
+    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
+    bucket = int_key % No_Buckets;
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
   }
@@ -192,13 +192,20 @@ else
     next = entry->next;
   }
   
-  // Den innan var (next && next-> value)
-   if (next != NULL)
-   {
-     return (ioopm_option_t) { .success = true, .value = next->value };
-   }
-  else
-   {
+// Den innan var (next && next-> value)
+   if (next != NULL) {
+     if (ht->hash_fun == NULL) {
+        if (next->key.int_value == int_key) {
+          return (ioopm_option_t) { .success = true, .value = next->value };
+        } else {
+          return (ioopm_option_t) { .success = false};
+        }
+     } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
+          return (ioopm_option_t) { .success = true, .value = next->value };
+      } else {
+        return (ioopm_option_t) { .success = false};
+     }
+    } else {
      return (ioopm_option_t) { .success = false};
    }
 }
@@ -214,8 +221,8 @@ ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
   if (ht->hash_fun == NULL)
   {
     // treat keys as integers
-    int_key = key.int_value; // .i reads the integer part of the elem_t
-    bucket = abs(int_key % No_Buckets);
+    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
+    bucket = int_key % No_Buckets;
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
   }
@@ -226,18 +233,32 @@ else
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
   }
-   ioopm_option_t options = { .success = true, .value = next->value};
-
-   if (next != NULL)
-   {
-     entry->next = next->next;
-     free(next);
-     return options;
+   
+  
+   if (next != NULL) {
+    if (ht->hash_fun == NULL) {
+      if (next->key.int_value == int_key) {
+        ioopm_option_t options = { .success = true, .value = next->value};
+        entry->next = next->next;
+        free(next);
+        return options;
+      } else {
+        ioopm_option_t options = { .success = false};
+        return options;
+      }
+    } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
+      ioopm_option_t options = { .success = true, .value = next->value};
+      entry->next = next->next;
+      free(next);
+      return options;
+   } else {
+    ioopm_option_t options = { .success = false};
+    return options;
    }
-   else
-   {
-     return options;
-   }
+  } else {
+    ioopm_option_t options = { .success = false};
+    return options;
+  }
  }
 
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
