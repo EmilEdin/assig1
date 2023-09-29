@@ -98,25 +98,25 @@ void test_prepend_link(void)
 
 void test_insert_link(void) {
   ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
-    
-    ioopm_linked_list_prepend(new_list, int_elem(2));
-    ioopm_linked_list_prepend(new_list, int_elem(5));
-    ioopm_linked_list_prepend(new_list, int_elem(124));
-    // Checks that inserting at before first and after last element works.
-    ioopm_linked_list_insert(new_list, 0, int_elem(69));
-    CU_ASSERT_EQUAL(new_list->first->element.int_value, 69);
-    ioopm_linked_list_insert(new_list, ioopm_linked_list_size(new_list), int_elem(100));
-    CU_ASSERT_EQUAL(new_list->last->element.int_value, 100);
+  
+  ioopm_linked_list_prepend(new_list, int_elem(2));
+  ioopm_linked_list_prepend(new_list, int_elem(5));
+  ioopm_linked_list_prepend(new_list, int_elem(124));
+  // Checks that inserting at before first and after last element works.
+  ioopm_linked_list_insert(new_list, 0, int_elem(69));
+  CU_ASSERT_EQUAL(new_list->first->element.int_value, 69);
+  ioopm_linked_list_insert(new_list, ioopm_linked_list_size(new_list), int_elem(100));
+  CU_ASSERT_EQUAL(new_list->last->element.int_value, 100);
 
-    ioopm_linked_list_insert(new_list, 2, int_elem(1337));
-    CU_ASSERT_EQUAL(new_list->first->next->element.int_value, 1337);
-    
-    int size = ioopm_linked_list_size(new_list);
-    for (int i = 0; i < size; i++) {
-      ioopm_linked_list_insert(new_list, i, int_elem(i*i));
-    }
-  //MER TEST?
-    ioopm_linked_list_destroy(new_list);
+  ioopm_linked_list_insert(new_list, 2, int_elem(1337));
+  CU_ASSERT_EQUAL(new_list->first->next->element.int_value, 1337);
+  
+  int size = ioopm_linked_list_size(new_list);
+  for (int i = 0; i < size; i++) {
+    ioopm_linked_list_insert(new_list, i, int_elem(i*i));
+  }
+//MER TEST?
+  ioopm_linked_list_destroy(new_list);
 }
 
 void test_size_n_empty_list(void) {
@@ -131,17 +131,31 @@ void test_size_n_empty_list(void) {
   ioopm_linked_list_destroy(new_list);
 }
 
+void test_link_contains(void) {
+  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+  CU_ASSERT_FALSE(ioopm_linked_list_contains(new_list, int_elem(2)));
+
+  ioopm_linked_list_append(new_list, int_elem(2));
+  ioopm_linked_list_append(new_list, int_elem(5));
+  ioopm_linked_list_append(new_list, int_elem(124));
+
+  CU_ASSERT_TRUE(ioopm_linked_list_contains(new_list, int_elem(2)));
+  CU_ASSERT_FALSE(ioopm_linked_list_contains(new_list, int_elem(7)));
+
+  ioopm_linked_list_destroy(new_list);
+}
+
 void test_get_link(void)
 {
-    ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
-    
-    ioopm_linked_list_append(new_list, int_elem(2));
-    ioopm_linked_list_append(new_list, int_elem(5));
-    ioopm_linked_list_append(new_list, int_elem(124));
+  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+  
+  ioopm_linked_list_append(new_list, int_elem(2));
+  ioopm_linked_list_append(new_list, int_elem(5));
+  ioopm_linked_list_append(new_list, int_elem(124));
 
-    CU_ASSERT_EQUAL(ioopm_linked_list_get(new_list, 2).int_value, 124)
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(new_list, 2).int_value, 124)
 
-    ioopm_linked_list_destroy(new_list);
+  ioopm_linked_list_destroy(new_list);
 }
 
 void test_remove_element_from_list(void) {
@@ -384,6 +398,7 @@ int main() {
     (CU_add_test(my_test_suite, "Test for append_link functionality", test_append_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for prepend_link functionality", test_prepend_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insert_link functionality", test_insert_link) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for link_contains functionality", test_link_contains) == NULL) ||
     (CU_add_test(my_test_suite, "Test for get_link functionality", test_get_link) == NULL) ||
     (CU_add_test(my_test_suite, "Test for size_n_empty_link functionality", test_size_n_empty_list) == NULL) ||
     (CU_add_test(my_test_suite, "Test for remove_link functionality", test_remove_element_from_list) == NULL) ||

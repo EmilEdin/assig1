@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-#include "string.h"
+#include <string.h>
 #include <stdio.h>
 #include "linked_list.c"
 #define No_Buckets 17
+
 
 static bool int_compare(elem_t a, elem_t b) { return a.int_value == b.int_value;}
 
@@ -149,7 +150,11 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
       bucket = abs(int_key % No_Buckets);
       entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
       next = entry->next;
-      next_key.int_value = ht->hash_fun(next->key);
+      if(next == NULL) {
+        next_key.void_value = NULL;
+      } else {
+        next_key.int_value = ht->hash_fun(next->key);
+      }
     }
 
     /// Check if the next entry should be updated or not

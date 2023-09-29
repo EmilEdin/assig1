@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "string.h"
+#include <string.h>
 typedef struct entry entry_t;
 
 struct entry
@@ -14,6 +14,11 @@ struct entry
   elem_t value;   // holds the value
   entry_t *next; // points to the next entry (possibly NULL)
 };
+
+int string_to_int(elem_t str){
+  int new_int = atoi(str.string_value);
+  return new_int;
+}
 
 #define No_Buckets 17
 
@@ -67,6 +72,7 @@ void test_create_destroy(void)
 void test_insert_once()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
+  ioopm_hash_table_t *ht_str = ioopm_hash_table_create(string_to_int);
   for (int i = 0; i <= 16; ++i) {
     ioopm_option_t answer = ioopm_hash_table_lookup(ht, int_elem(i));
     char *struct_value = answer.value;
@@ -75,19 +81,32 @@ void test_insert_once()
   // TODO: Test when insert and lookup are given a negative integer.
   
   // Checks that insert works combined with lookup.
+  int new_int = atoi("72");
+  printf("%d", new_int);
+  ioopm_hash_table_insert(ht_str, ptr_elem("72"), ptr_elem("Hej"));
+  ioopm_option_t struct_test1 = ioopm_hash_table_lookup(ht_str, ptr_elem("72"));
+  char *struct_value_of_test1 = struct_test1.value;
+  CU_ASSERT_PTR_NOT_NULL(struct_value_of_test1);
+
+
   ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
   ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, int_elem(6));
   char *struct_value_of_test = struct_test.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test);
+
+
   // Checks that remove function works combined with lookup.
   ioopm_option_t remove_test = ioopm_hash_table_remove(ht, int_elem(6));
   char *remove = remove_test.value;
+
+
   // Remove will return the value string if remove was a success.
   CU_ASSERT_PTR_NOT_NULL(remove);
   // Checks that we removed the entry struct.
   ioopm_option_t removed_struct = ioopm_hash_table_lookup(ht, int_elem(6));
   char *struct_value_of_removed_struct = removed_struct.value;
   CU_ASSERT_PTR_NULL(struct_value_of_removed_struct);
+
   // Checks that inserts works for negative integer values for key.
   ioopm_hash_table_insert(ht, int_elem(-1), ptr_elem("Hej"));
   ioopm_option_t negative_test = ioopm_hash_table_lookup(ht, int_elem(-1));
@@ -101,6 +120,7 @@ void test_insert_once()
   CU_ASSERT_PTR_NOT_NULL(test_zero_key);
 
  ioopm_hash_table_destroy(ht);
+ ioopm_hash_table_destroy(ht_str);
 }
 
 void test_hash_table_size(void)
@@ -299,9 +319,13 @@ void test_hash_table_apply_to_all(void) {
   ioopm_hash_table_destroy(ht);
 }
 
-static bool all_function(elem_t key, elem_t value, void *extra) {
-  ioopm_hash_table_t *ht = extra;
-  return ioopm_hash_table_has_key(ht, key);
+bool is_even(elem_t key, elem_t value, void *extra)
+{
+    if(value.int_value % 2 == 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
@@ -338,15 +362,17 @@ void test_hash_table_all(void)
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL);
 
-  CU_ASSERT_TRUE(ioopm_hash_table_all(ht, all_function, ht));
+  CU_ASSERT_TRUE(ioopm_hash_table_all(ht, is_even, ht));
 
   ioopm_hash_table_insert(ht, int_elem(3), ptr_elem("three"));
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, is_even, ht))
+
   ioopm_hash_table_insert(ht, int_elem(10), ptr_elem("ten"));
   ioopm_hash_table_insert(ht, int_elem(42), ptr_elem("fortytwo"));
   ioopm_hash_table_insert(ht, int_elem(1), ptr_elem("zero"));
   ioopm_hash_table_insert(ht, int_elem(99), ptr_elem("ninetynine"));
 
-  CU_ASSERT_TRUE(ioopm_hash_table_all(ht, all_function, ht))
+  CU_ASSERT_TRUE(ioopm_hash_table_all(ht, is_even, ht))
 
   ioopm_hash_table_destroy(ht);
 }
