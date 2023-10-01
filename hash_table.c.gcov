@@ -2,6 +2,7 @@
         -:    0:Graph:./hash_table.gcno
         -:    0:Data:./hash_table.gcda
         -:    0:Runs:1
+        -:    0:Source is newer than graph
         -:    1:#include "hash_table.h"
         -:    2:#include "common.h"
         -:    3:#include <stdlib.h>
@@ -28,411 +29,422 @@
         -:   24:{
         -:   25:  entry_t *buckets[No_Buckets];
         -:   26:  hash_function hash_fun;
-        -:   27:};
-        -:   28:
-        -:   29: typedef struct option ioopm_option_t;
-        -:   30:
-        -:   31: struct option
-        -:   32: {
-        -:   33:   bool success;
-        -:   34:   elem_t value;
-        -:   35: };
-        -:   36:
+        -:   27:  ioopm_predicate eq_fun;
+        -:   28:};
+        -:   29:
+        -:   30: typedef struct option ioopm_option_t;
+        -:   31:
+        -:   32: struct option
+        -:   33: {
+        -:   34:   bool success;
+        -:   35:   elem_t value;
+        -:   36: };
         -:   37:
-      290:   38:static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
-        -:   39:{
-      290:   40:  entry_t *new_entry = calloc(1, sizeof(entry_t)); // Allocate memory for the entry
-      290:   41:  new_entry->key = key;
-      290:   42:  new_entry->value = value;
-      290:   43:  new_entry->next = next;
-      290:   44:  return new_entry;
-        -:   45:}
-        -:   46:
-      280:   47:void entry_destroy(entry_t *entry) {
-        -:   48:  // Cache the next pointer
-      280:   49:  entry_t *next = entry->next;
-      280:   50:  free(entry);
-      280:   51:  if (next != NULL) {
-       41:   52:    entry_destroy(next);
-        -:   53:  }
-      280:   54:}
-        -:   55:
-       14:   56:ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun)
-        -:   57:{
-        -:   58:  /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
-        -:   59:  /// entry_t's, which will be set to NULL
-       14:   60:  ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
-      252:   61:  for (int i = 0; i < No_Buckets; i++) {
-      238:   62:    result->buckets[i] = entry_create(int_elem(0), ptr_elem(NULL), NULL);
-        -:   63:  }
-       14:   64:  result->hash_fun = hash_fun;
-       14:   65:  return result;
-        -:   66:}
-        -:   67:
-       14:   68:void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
-        -:   69:  // TODO 
-      252:   70:  for (int i = 0; i < No_Buckets; i++) {
-      238:   71:    entry_destroy(ht->buckets[i]);
-        -:   72:  }
-       14:   73:  free(ht);
-       14:   74:}
-        -:   75:
-        -:   76:
-        -:   77:// static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
-        -:   78://   entry_t *t1 = (*entry)->next;
-        -:   79://   if (t1 == NULL) {
-        -:   80://     return *entry;
-        -:   81://   } else if (t1->key > key) {
+      290:   38:
+        -:   39:static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
+      290:   40:{
+      290:   41:  entry_t *new_entry = calloc(1, sizeof(entry_t)); // Allocate memory for the entry
+      290:   42:  new_entry->key = key;
+      290:   43:  new_entry->value = value;
+      290:   44:  new_entry->next = next;
+        -:   45:  return new_entry;
+        -:   46:}
+      280:   47:
+        -:   48:void entry_destroy(entry_t *entry) {
+      280:   49:  // Cache the next pointer
+      280:   50:  entry_t *next = entry->next;
+      280:   51:  free(entry);
+       41:   52:  if (next != NULL) {
+        -:   53:    entry_destroy(next);
+      280:   54:  }
+        -:   55:}
+       14:   56:
+        -:   57:ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun)
+        -:   58:{
+        -:   59:  /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
+       14:   60:  /// entry_t's, which will be set to NULL
+      252:   61:  ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
+      238:   62:  for (int i = 0; i < No_Buckets; i++) {
+        -:   63:    result->buckets[i] = entry_create(int_elem(0), ptr_elem(NULL), NULL);
+       14:   64:  }
+       14:   65:  result->hash_fun = hash_fun;
+        -:   66:  result->eq_fun = eq_fun;
+        -:   67:  return result;
+       14:   68:}
+        -:   69:
+      252:   70:void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
+      238:   71:  // TODO 
+        -:   72:  for (int i = 0; i < No_Buckets; i++) {
+       14:   73:    entry_destroy(ht->buckets[i]);
+       14:   74:  }
+        -:   75:  free(ht);
+        -:   76:}
+        -:   77:
+        -:   78:
+        -:   79:// static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
+        -:   80://   entry_t *t1 = (*entry)->next;
+        -:   81://   if (t1 == NULL) {
         -:   82://     return *entry;
-        -:   83://   } else {}
-        -:   84://   entry_t *temp_entry = find_previous_entry_for_key(&t1, key);
-        -:   85://   return temp_entry;
-        -:   86:// }
-        -:   87:
-        -:   88:
-        -:   89:// static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
-        -:   90://   entry_t *t1 = (*entry)->next;
-        -:   91://   while (t1 != NULL) {
-        -:   92://     if (t1->key > key) {
-        -:   93://       break;
-        -:   94://     } else {
-        -:   95://       t1 = t1->next;
-        -:   96://     }
-        -:   97://   }
-        -:   98://   return *entry;
-        -:   99:// }
-        -:  100:// */
-        -:  101:
-        -:  102:
-        -:  103:// vi börjar med NULL 0 så vi måste gå på först
-      117:  104:static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_function hash) {
-      117:  105:  if (hash == NULL) {
-       90:  106:    entry_t *t1 = entry->next;
-       90:  107:    if (t1 == NULL) {
-       66:  108:      return entry;
-       24:  109:    } else if (abs(t1->key.int_value) >= key) {
+        -:   83://   } else if (t1->key > key) {
+        -:   84://     return *entry;
+        -:   85://   } else {}
+        -:   86://   entry_t *temp_entry = find_previous_entry_for_key(&t1, key);
+        -:   87://   return temp_entry;
+        -:   88:// }
+        -:   89:
+        -:   90:
+        -:   91:// static entry_t *find_previous_entry_for_key(entry_t **entry, int key) {
+        -:   92://   entry_t *t1 = (*entry)->next;
+        -:   93://   while (t1 != NULL) {
+        -:   94://     if (t1->key > key) {
+        -:   95://       break;
+        -:   96://     } else {
+        -:   97://       t1 = t1->next;
+        -:   98://     }
+        -:   99://   }
+        -:  100://   return *entry;
+        -:  101:// }
+        -:  102:// */
+        -:  103:
+      117:  104:
+      117:  105:// vi börjar med NULL 0 så vi måste gå på först
+       90:  106:static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_function hash) {
+       90:  107:  if (hash == NULL) {
+       66:  108:    entry_t *t1 = entry->next;
+       24:  109:    if (t1 == NULL) {
        13:  110:      return entry;
-        -:  111:    } else {
-       11:  112:      return find_previous_entry_for_key(t1, key, hash);
-        -:  113:    }
-        -:  114:  } else {
-       27:  115:    entry_t *t1 = entry->next;
-       27:  116:    if (t1 == NULL) {
-        8:  117:      return entry;
-       19:  118:    } else if (abs(hash(t1->key)) >= key) {
+        -:  111:    } else if (abs(t1->key.int_value) >= key) {
+       11:  112:      return entry;
+        -:  113:    } else {
+        -:  114:      return find_previous_entry_for_key(t1, key, hash);
+       27:  115:    }
+       27:  116:  } else {
+        8:  117:    entry_t *t1 = entry->next;
+       19:  118:    if (t1 == NULL) {
         7:  119:      return entry;
-        -:  120:    } else {
-       12:  121:      return find_previous_entry_for_key(t1, key, hash);
-        -:  122:    }
-        -:  123:  }
-        -:  124:}
-       53:  125:void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
-        -:  126:{
-        -:  127:  int bucket;
-        -:  128:  int int_key;
-        -:  129:  elem_t next_key;
-        -:  130:  entry_t *entry;
-        -:  131:  entry_t *next;
-        -:  132:  /// Search for an existing entry for a key
-        -:  133:  // TODO &ht
-       53:  134:  if (ht->hash_fun == NULL)
-        -:  135:  {
-        -:  136:    // treat keys as integers
-       47:  137:    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
-       47:  138:    bucket = int_key % No_Buckets;
-       47:  139:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-       47:  140:    next = entry->next;
-       47:  141:    if (next == NULL) {
-       45:  142:      next_key.void_value = NULL;
-        -:  143:    } else {
-        2:  144:      next_key.int_value = abs(next->key.int_value);
-        -:  145:    }
-        -:  146:  }
-        -:  147:  else
-        -:  148:    {
-        6:  149:      int_key = abs(ht->hash_fun(key));
-        6:  150:      bucket = int_key % No_Buckets;
-        6:  151:      entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-        6:  152:      next = entry->next;
-        6:  153:      if(next == NULL) {
-        5:  154:        next_key.void_value = NULL;
-        -:  155:      } else {
-        1:  156:        next_key.int_value =abs(ht->hash_fun(next->key));
-        -:  157:      }
-        -:  158:    }
-        -:  159:    
-        -:  160:    /// Check if the next entry should be updated or not
-       53:  161:    if (next != NULL) {
-        3:  162:      if (ht->hash_fun == NULL) {
-        2:  163:        if (next_key.int_value == int_key) {
-        1:  164:          next->value = value;
-        -:  165:        } else {
-        1:  166:          key.int_value = abs(key.int_value);
-        1:  167:          entry->next = entry_create(key, value, next);
-        -:  168:        }
-        1:  169:      } else if (next_key.int_value == int_key) {
-    #####:  170:        next->value = value;
-        -:  171:      } else {
-        1:  172:        entry->next = entry_create(key, value, next);
-        -:  173:      } 
-        -:  174:    } else {
-       50:  175:      if (ht->hash_fun == NULL) {
-       45:  176:        key.int_value = abs(key.int_value);
-       45:  177:        entry->next = entry_create(key, value, next);
-        -:  178:      } else {
-        5:  179:        entry->next = entry_create(key, value, next);
-        -:  180:      }
-        -:  181:    }
-       53:  182:}
-        -:  183:
-        -:  184:
-        -:  185:
+        -:  120:    } else if (abs(hash(t1->key)) >= key) {
+       12:  121:      return entry;
+        -:  122:    } else {
+        -:  123:      return find_previous_entry_for_key(t1, key, hash);
+        -:  124:    }
+       53:  125:  }
+        -:  126:}
+        -:  127:
+        -:  128:void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
+        -:  129:{
+        -:  130:  int bucket;
+        -:  131:  int int_key;
+        -:  132:  elem_t next_key;
+        -:  133:  entry_t *entry;
+       53:  134:  entry_t *next;
+        -:  135:  /// Search for an existing entry for a key
+        -:  136:  // TODO &ht
+       47:  137:  if (ht->hash_fun == NULL)
+       47:  138:  {
+       47:  139:    // treat keys as integers
+       47:  140:    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
+       47:  141:    bucket = int_key % No_Buckets;
+       45:  142:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+        -:  143:    next = entry->next;
+        2:  144:    if (next == NULL) {
+        -:  145:      next_key.void_value = NULL;
+        -:  146:    } else {
+        -:  147:      next_key.int_value = abs(next->key.int_value);
+        -:  148:    }
+        6:  149:  }
+        6:  150:  else
+        6:  151:    {
+        6:  152:      int_key = abs(ht->hash_fun(key));
+        6:  153:      bucket = int_key % No_Buckets;
+        5:  154:      entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+        -:  155:      next = entry->next;
+        1:  156:      if(next == NULL) {
+        -:  157:        next_key.void_value = NULL;
+        -:  158:      } else {
+        -:  159:        next_key.int_value =abs(ht->hash_fun(next->key));
+        -:  160:      }
+       53:  161:    }
+        3:  162:    
+        2:  163:    /// Check if the next entry should be updated or not
+        1:  164:    if (next != NULL) {
+        -:  165:      if (ht->hash_fun == NULL) {
+        1:  166:        if (next_key.int_value == int_key) {
+        1:  167:          next->value = value;
+        -:  168:        } else {
+        1:  169:          key.int_value = abs(key.int_value);
+    #####:  170:          entry->next = entry_create(key, value, next);
+        -:  171:        }
+        1:  172:      } else if (next_key.int_value == int_key) {
+        -:  173:        next->value = value;
+        -:  174:      } else {
+       50:  175:        entry->next = entry_create(key, value, next);
+       45:  176:      } 
+       45:  177:    } else {
+        -:  178:      if (ht->hash_fun == NULL) {
+        5:  179:        key.int_value = abs(key.int_value);
+        -:  180:        entry->next = entry_create(key, value, next);
+        -:  181:      } else {
+       53:  182:        entry->next = entry_create(key, value, next);
+        -:  183:      }
+        -:  184:    }
+        -:  185:}
         -:  186:
-       27:  187:ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
-        -:  188: {
-        -:  189:  int bucket;
-        -:  190:  int int_key;
-        -:  191:  entry_t *entry;
-        -:  192:  entry_t *next;
-        -:  193:  /// Search for an existing entry for a key
-        -:  194:  // TODO &ht
-       27:  195:  if (ht->hash_fun == NULL)
-        -:  196:  {
-        -:  197:    // treat keys as integers
-       23:  198:    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
-       23:  199:    bucket = int_key % No_Buckets;
-       23:  200:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-       23:  201:    next = entry->next;
-        -:  202:  }
-        -:  203:else
-        -:  204:  {
-        4:  205:    int_key = ht->hash_fun(key);
-        4:  206:    bucket = abs(int_key % No_Buckets);
-        4:  207:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-        4:  208:    next = entry->next;
-        -:  209:  }
-        -:  210:  
-        -:  211:// Den innan var (next && next-> value)
-       27:  212:   if (next != NULL) {
-        6:  213:     if (ht->hash_fun == NULL) {
-        4:  214:        if (next->key.int_value == int_key) {
-        3:  215:          return (ioopm_option_t) { .success = true, .value = next->value };
-        -:  216:        } else {
-        1:  217:          return (ioopm_option_t) { .success = false};
-        -:  218:        }
-        2:  219:     } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
-        1:  220:          return (ioopm_option_t) { .success = true, .value = next->value };
-        -:  221:      } else {
-        1:  222:        return (ioopm_option_t) { .success = false};
-        -:  223:     }
-        -:  224:    } else {
-       21:  225:     return (ioopm_option_t) { .success = false};
-        -:  226:   }
-        -:  227:}
-        -:  228:
-       14:  229:ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
-        -:  230: {
-        -:  231:   int bucket;
-        -:  232:  int int_key;
-        -:  233:  entry_t *entry;
-        -:  234:  entry_t *next;
-        -:  235:  /// Search for an existing entry for a key
-        -:  236:  // TODO &ht
-       14:  237:  if (ht->hash_fun == NULL)
-        -:  238:  {
-        -:  239:    // treat keys as integers
-        9:  240:    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
-        9:  241:    bucket = int_key % No_Buckets;
-        9:  242:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-        9:  243:    next = entry->next;
-        -:  244:  }
-        -:  245:else
-        -:  246:  {
-        5:  247:    int_key = ht->hash_fun(key);
-        5:  248:    bucket = abs(int_key % No_Buckets);
-        5:  249:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-        5:  250:    next = entry->next;
-        -:  251:  }
-        -:  252:   
-        -:  253:  
-       14:  254:   if (next != NULL) {
-       11:  255:    if (ht->hash_fun == NULL) {
-        7:  256:      if (next->key.int_value == int_key) {
-        7:  257:        ioopm_option_t options = { .success = true, .value = next->value};
-        7:  258:        entry->next = next->next;
-        7:  259:        free(next);
-        7:  260:        return options;
-        -:  261:      } else {
-    #####:  262:        ioopm_option_t options = { .success = false};
+       27:  187:
+        -:  188:
+        -:  189:
+        -:  190:ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
+        -:  191: {
+        -:  192:  int bucket;
+        -:  193:  int int_key;
+        -:  194:  entry_t *entry;
+       27:  195:  entry_t *next;
+        -:  196:  /// Search for an existing entry for a key
+        -:  197:  // TODO &ht
+       23:  198:  if (ht->hash_fun == NULL)
+       23:  199:  {
+       23:  200:    // treat keys as integers
+       23:  201:    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
+        -:  202:    bucket = int_key % No_Buckets;
+        -:  203:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+        -:  204:    next = entry->next;
+        4:  205:  }
+        4:  206:else
+        4:  207:  {
+        4:  208:    int_key = ht->hash_fun(key);
+        -:  209:    bucket = abs(int_key % No_Buckets);
+        -:  210:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+        -:  211:    next = entry->next;
+       27:  212:  }
+        6:  213:  
+        4:  214:// Den innan var (next && next-> value)
+        3:  215:   if (next != NULL) {
+        -:  216:     if (ht->hash_fun == NULL) {
+        1:  217:        if (next->key.int_value == int_key) {
+        -:  218:          return (ioopm_option_t) { .success = true, .value = next->value };
+        2:  219:        } else {
+        1:  220:          return (ioopm_option_t) { .success = false};
+        -:  221:        }
+        1:  222:     } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
+        -:  223:          return (ioopm_option_t) { .success = true, .value = next->value };
+        -:  224:      } else {
+       21:  225:        return (ioopm_option_t) { .success = false};
+        -:  226:     }
+        -:  227:    } else {
+        -:  228:     return (ioopm_option_t) { .success = false};
+       14:  229:   }
+        -:  230:}
+        -:  231:
+        -:  232:ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
+        -:  233: {
+        -:  234:   int bucket;
+        -:  235:  int int_key;
+        -:  236:  entry_t *entry;
+       14:  237:  entry_t *next;
+        -:  238:  /// Search for an existing entry for a key
+        -:  239:  // TODO &ht
+        9:  240:  if (ht->hash_fun == NULL)
+        9:  241:  {
+        9:  242:    // treat keys as integers
+        9:  243:    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
+        -:  244:    bucket = int_key % No_Buckets;
+        -:  245:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+        -:  246:    next = entry->next;
+        5:  247:  }
+        5:  248:else
+        5:  249:  {
+        5:  250:    int_key = ht->hash_fun(key);
+        -:  251:    bucket = abs(int_key % No_Buckets);
+        -:  252:    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
+        -:  253:    next = entry->next;
+       14:  254:  }
+       11:  255:   
+        7:  256:  
+        7:  257:   if (next != NULL) {
+        7:  258:    if (ht->hash_fun == NULL) {
+        7:  259:      if (next->key.int_value == int_key) {
+        7:  260:        ioopm_option_t options = { .success = true, .value = next->value};
+        -:  261:        entry->next = next->next;
+    #####:  262:        free(next);
     #####:  263:        return options;
-        -:  264:      }
-        4:  265:    } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
-        3:  266:      ioopm_option_t options = { .success = true, .value = next->value};
-        3:  267:      entry->next = next->next;
-        3:  268:      free(next);
-        3:  269:      return options;
-        -:  270:   } else {
-        1:  271:    ioopm_option_t options = { .success = false};
-        1:  272:    return options;
-        -:  273:   }
-        -:  274:  } else {
-        3:  275:    ioopm_option_t options = { .success = false};
-        3:  276:    return options;
-        -:  277:  }
-        -:  278: }
-        -:  279:
-       27:  280:size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
-       27:  281:  size_t counter = 0;
-      486:  282:  for (int i = 0; i < No_Buckets; i++) {
-      459:  283:    entry_t *t = ht->buckets[i];
-      566:  284:      while (t->next != NULL) {
-      107:  285:        counter = counter + 1;
-      107:  286:        t = t->next;
-        -:  287:      }
-        -:  288:  }
-       27:  289:  return counter;
-        -:  290:}
-        -:  291:
-        2:  292:bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
-        -:  293:{
-       25:  294:  for (int i = 0; i < No_Buckets; i++) {
-       24:  295:    if (ht->buckets[i]->next != NULL) {
-        1:  296:      return false;
-        -:  297:    }
-        -:  298:  }
-        1:  299:  return true;
-        -:  300:}
-        -:  301:
-        1:  302:void ioopm_hash_table_clear(ioopm_hash_table_t *ht) 
-        -:  303:{
-       18:  304:  for (int i = 0; i < No_Buckets; i++) {
-       17:  305:    entry_t *t = ht->buckets[i]->next;
-       17:  306:    if (t != NULL)
-        -:  307:    {
-        1:  308:      entry_destroy(t);
-        1:  309:      ht->buckets[i]->next = NULL;
-        -:  310:    }
-        -:  311:  }
-        1:  312:}
-        -:  313:
-       26:  314:ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
-        -:  315:{
-       26:  316:  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
-        -:  317:  
-      468:  318:  for (int i = 0; i < No_Buckets; i++) {
-      442:  319:    entry_t *t = ht->buckets[i]->next;
-      553:  320:    while (t != NULL) {
-      111:  321:      ioopm_linked_list_append(new_list, t->key);
-      111:  322:      t = t->next;
-        -:  323:    }
-        -:  324:  }
-       26:  325:  return new_list;
-        -:  326:}
-        -:  327:
-        -:  328:
-       25:  329:ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht) 
-        -:  330:{
-       25:  331:  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
-        -:  332:  
-      450:  333:  for (int i = 0; i < No_Buckets; i++) {
-      425:  334:    entry_t *t = ht->buckets[i]->next;
-      531:  335:    while (t != NULL) {
-      106:  336:      ioopm_linked_list_append(new_list, t->value);
-      106:  337:      t = t->next;
-        -:  338:    }
-        -:  339:  }
-       25:  340:  return new_list;
-        -:  341:}
-        -:  342:
-        -:  343:
-        -:  344:
-       27:  345:static bool key_equiv(elem_t key, elem_t value_ignored, void *x)
-        -:  346:{
-       27:  347:  if(key.string_value != NULL) {
-       27:  348:    elem_t *other_key_ptr = x;
-       27:  349:    char *other_key = other_key_ptr->string_value;
-       27:  350:    return key.string_value == other_key; 
-        -:  351:  } else {
-    #####:  352:    elem_t *other_key_ptr = x;
-    #####:  353:    int other_key = other_key_ptr->int_value;
-    #####:  354:    return key.int_value == other_key;
-        -:  355:  }
-        -:  356:}
-        -:  357:
-       30:  358:static bool value_equiv(elem_t key_ignored, elem_t value, void *x)
-        -:  359:{
-       30:  360:  if(value.string_value != NULL) {
-       30:  361:    elem_t *other_value_ptr = x;
-       30:  362:    char *other_value = other_value_ptr->string_value;
-       30:  363:    return strcmp(value.string_value, other_value) == 0;
-        -:  364:  } else {
-    #####:  365:    elem_t *other_value_ptr = x;
-    #####:  366:    int other_value = other_value_ptr->int_value;
-    #####:  367:    return value.int_value == other_value;
-        -:  368:  }
-        -:  369:}
-        -:  370:
-        3:  371:bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
-        -:  372:{
-        3:  373:  size_t size = ioopm_hash_table_size(ht);
-        3:  374:  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
-        3:  375:  ioopm_link_t *link = linked_list->first;
-        -:  376:
-        3:  377:  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
-        3:  378:  ioopm_link_t *arr = arr_v->first;
-       3*:  379:  for (int i = 0; i < size; link = link->next, i++) {
-        2:  380:    if (!pred(link->element, arr->element, arg)) {
-        2:  381:      ioopm_linked_list_destroy(linked_list);
-        2:  382:      ioopm_linked_list_destroy(arr_v);
-        2:  383:      return false;   
-        -:  384:    }
-        -:  385:  } 
-        1:  386:  ioopm_linked_list_destroy(linked_list);
-        1:  387:  ioopm_linked_list_destroy(arr_v);
-        1:  388:  return true;
-        -:  389:}
-        -:  390:
-        -:  391:
-       20:  392:bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
-        -:  393:{
-       20:  394:  size_t size = ioopm_hash_table_size(ht);
-       20:  395:  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
-       20:  396:  ioopm_link_t *link = linked_list->first;
-        -:  397:
-       20:  398:  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
-       20:  399:  ioopm_link_t *arr = arr_v->first;
-       59:  400:  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-       57:  401:    if (pred(link->element, arr->element, arg)) {
-       18:  402:      ioopm_linked_list_destroy(linked_list);
-       18:  403:      ioopm_linked_list_destroy(arr_v);
-       18:  404:      return true;  
-        -:  405:    }
-        -:  406:  } 
-        2:  407:  ioopm_linked_list_destroy(linked_list);
-        2:  408:  ioopm_linked_list_destroy(arr_v);
-        2:  409:  return false;
-        -:  410:}
-        -:  411:
-       10:  412:bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key) {
-       10:  413:  return ioopm_hash_table_any(ht, key_equiv, &key);
-        -:  414:}
-        -:  415:
-       10:  416:bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value) {
-       10:  417:  return ioopm_hash_table_any(ht, value_equiv, &value);
-        -:  418:}
-        -:  419:
-        -:  420:
-        1:  421:void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
-        -:  422:{
-        1:  423:  size_t size = ioopm_hash_table_size(ht); 
-        1:  424:  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
-        1:  425:  ioopm_link_t *link = linked_list->first;
-        -:  426:
-        1:  427:  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
-        1:  428:  ioopm_link_t *arr = arr_v->first;
-        6:  429:  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-        5:  430:    apply_fun(link->element, arr->element, arg);
-        -:  431:  }
-        1:  432:  ioopm_linked_list_destroy(linked_list);
-        1:  433:  ioopm_linked_list_destroy(arr_v);
-        1:  434:}
+        -:  264:      } else {
+        4:  265:        ioopm_option_t options = { .success = false};
+        3:  266:        return options;
+        3:  267:      }
+        3:  268:    } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
+        3:  269:      ioopm_option_t options = { .success = true, .value = next->value};
+        -:  270:      entry->next = next->next;
+        1:  271:      free(next);
+        1:  272:      return options;
+        -:  273:   } else {
+        -:  274:    ioopm_option_t options = { .success = false};
+        3:  275:    return options;
+        3:  276:   }
+        -:  277:  } else {
+        -:  278:    ioopm_option_t options = { .success = false};
+        -:  279:    return options;
+       27:  280:  }
+       27:  281: }
+      486:  282:
+      459:  283:size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
+      566:  284:  size_t counter = 0;
+      107:  285:  for (int i = 0; i < No_Buckets; i++) {
+      107:  286:    entry_t *t = ht->buckets[i];
+        -:  287:      while (t->next != NULL) {
+        -:  288:        counter = counter + 1;
+       27:  289:        t = t->next;
+        -:  290:      }
+        -:  291:  }
+        2:  292:  return counter;
+        -:  293:}
+       25:  294:
+       24:  295:bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
+        1:  296:{
+        -:  297:  for (int i = 0; i < No_Buckets; i++) {
+        -:  298:    if (ht->buckets[i]->next != NULL) {
+        1:  299:      return false;
+        -:  300:    }
+        -:  301:  }
+        1:  302:  return true;
+        -:  303:}
+       18:  304:
+       17:  305:void ioopm_hash_table_clear(ioopm_hash_table_t *ht) 
+       17:  306:{
+        -:  307:  for (int i = 0; i < No_Buckets; i++) {
+        1:  308:    entry_t *t = ht->buckets[i]->next;
+        1:  309:    if (t != NULL)
+        -:  310:    {
+        -:  311:      entry_destroy(t);
+        1:  312:      ht->buckets[i]->next = NULL;
+        -:  313:    }
+       26:  314:  }
+        -:  315:}
+       26:  316:
+        -:  317:ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+      468:  318:{
+      442:  319:  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+      553:  320:  
+      111:  321:  for (int i = 0; i < No_Buckets; i++) {
+      111:  322:    entry_t *t = ht->buckets[i]->next;
+        -:  323:    while (t != NULL) {
+        -:  324:      ioopm_linked_list_append(new_list, t->key);
+       26:  325:      t = t->next;
+        -:  326:    }
+        -:  327:  }
+        -:  328:  return new_list;
+       25:  329:}
+        -:  330:
+       25:  331:
+        -:  332:ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht) 
+      450:  333:{
+      425:  334:  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+      531:  335:  
+      106:  336:  for (int i = 0; i < No_Buckets; i++) {
+      106:  337:    entry_t *t = ht->buckets[i]->next;
+        -:  338:    while (t != NULL) {
+        -:  339:      ioopm_linked_list_append(new_list, t->value);
+       25:  340:      t = t->next;
+        -:  341:    }
+        -:  342:  }
+        -:  343:  return new_list;
+        -:  344:}
+       27:  345:
+        -:  346:
+       27:  347:
+       27:  348:
+       27:  349:static bool key_equiv(elem_t key, elem_t value_ignored, void *arg, bool x)
+       27:  350:{
+       27:  351:   // If x == True, keys are strings, else keys are ints
+        -:  352:  bool int_or_str = x;
+    #####:  353:
+    #####:  354:  if(int_or_str) {
+    #####:  355:    elem_t *other_key_ptr = arg;
+        -:  356:    char *other_key = other_key_ptr->string_value;
+        -:  357:    return key.string_value == other_key; 
+        -:  358:  } else {
+       30:  359:    elem_t *other_key_ptr = arg;
+        -:  360:    int other_key = other_key_ptr->int_value;
+       30:  361:    return key.int_value == other_key;
+       30:  362:  }
+       30:  363:}
+       30:  364:
+       30:  365:
+        -:  366:static bool value_int_equiv(elem_t value_ignored, elem_t value, void *arg, bool x)
+    #####:  367:{
+    #####:  368:  int *other_key_ptr = arg;
+    #####:  369:  int other_key = *other_key_ptr;
+        -:  370:  return value.int_value == other_key;
+        -:  371:}
+        -:  372:
+        3:  373:bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+        -:  374:{
+        3:  375:  size_t size = ioopm_hash_table_size(ht);
+        3:  376:  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+        3:  377:  ioopm_link_t *link = linked_list->first;
+        -:  378:
+        3:  379:  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
+        3:  380:  ioopm_link_t *arr = arr_v->first;
+       3*:  381:  bool *extra = false;
+        2:  382:  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
+        2:  383:    if (!pred(link->element, arr->element, arg, extra)) {
+        2:  384:      ioopm_linked_list_destroy(linked_list);
+        2:  385:      ioopm_linked_list_destroy(arr_v);
+        -:  386:      return false;   
+        -:  387:    }
+        1:  388:  } 
+        1:  389:  ioopm_linked_list_destroy(linked_list);
+        1:  390:  ioopm_linked_list_destroy(arr_v);
+        -:  391:  return true;
+        -:  392:}
+        -:  393:
+       20:  394:
+        -:  395:bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+       20:  396:{
+       20:  397:  size_t size = ioopm_hash_table_size(ht);
+       20:  398:  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+        -:  399:  ioopm_link_t *link = linked_list->first;
+       20:  400:
+       20:  401:  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
+       59:  402:  ioopm_link_t *arr = arr_v->first;
+       57:  403:  bool extra = false;
+       18:  404:  extra = (ht->eq_fun != NULL);
+       18:  405:
+       18:  406:  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
+        -:  407:    if (pred(link->element, arr->element, arg, extra)) {
+        -:  408:      ioopm_linked_list_destroy(linked_list);
+        2:  409:      ioopm_linked_list_destroy(arr_v);
+        2:  410:      return true;  
+        2:  411:    }
+        -:  412:  } 
+        -:  413:  ioopm_linked_list_destroy(linked_list);
+       10:  414:  ioopm_linked_list_destroy(arr_v);
+       10:  415:  return false;
+        -:  416:}
+        -:  417:
+       10:  418:bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key) {
+       10:  419:  return ioopm_hash_table_any(ht, key_equiv, &key);
+        -:  420:}
+        -:  421:
+        -:  422:bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value) {
+        1:  423:  // Values are strings
+        -:  424:  if (ht->eq_fun != NULL) {
+        1:  425:    return ioopm_hash_table_any(ht, ht->eq_fun, &value);
+        1:  426:  }
+        1:  427:  // Values are ints
+        -:  428:  return ioopm_hash_table_any(ht, value_int_equiv, &value);
+        1:  429:}
+        1:  430:
+        6:  431:
+        5:  432:void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
+        -:  433:{
+        1:  434:  size_t size = ioopm_hash_table_size(ht); 
+        1:  435:  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+        1:  436:  ioopm_link_t *link = linked_list->first;
+        -:  437:
+        -:  438:  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
+        -:  439:  ioopm_link_t *arr = arr_v->first;
+        -:  440:  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
+        -:  441:    apply_fun(link->element, arr->element, arg);
+        -:  442:  }
+        -:  443:  ioopm_linked_list_destroy(linked_list);
+        -:  444:  ioopm_linked_list_destroy(arr_v);
+        -:  445:}

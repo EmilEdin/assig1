@@ -302,6 +302,7 @@ void test_hash_table_values(void) {
 
 void test_hash_table_has_key_int(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL, NULL);
+  ioopm_hash_table_t *ht_str = ioopm_hash_table_create(NULL, value_equiv);
 
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
   
@@ -313,8 +314,18 @@ void test_hash_table_has_key_int(void) {
   CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(10)));
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
 
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
+  
+  ioopm_hash_table_insert(ht_str, ptr_elem("5"), ptr_elem("1three"));
+  ioopm_hash_table_insert(ht_str, ptr_elem("6"), ptr_elem("1ten"));
+  ioopm_hash_table_insert(ht_str, ptr_elem("7"), ptr_elem("1fortytwo"));
+
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht_str, ptr_elem("5")));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht_str, ptr_elem("6")));
+  CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht_str, ptr_elem("8")));
 
   ioopm_hash_table_destroy(ht);
+  ioopm_hash_table_destroy(ht_str);
 }
 
 void test_hash_table_has_value(void) {
