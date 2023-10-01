@@ -281,15 +281,3 @@ void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
 {
   iter->current = iter->list->first;
 }
-
-// int ioopm_iterator_remove(ioopm_list_iterator_t *iter)
-// {
-//   ioopm_list_iterator_t *to_remove = iter->current; 
-//   int result = to_remove->current->element;
-
-//   iter->current->next = to_remove->current->next; 
-
-//   free(to_remove); 
-
-//   return result;
-// }
