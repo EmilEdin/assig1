@@ -50,14 +50,15 @@ void entry_destroy(entry_t *entry) {
   entry_t *next = entry->next;
   free(entry);
   if (next != NULL) {
-    entry_destroy(next);
+    entry_destroy(next); // Destroy every link recursively untill we hit next == NULL
   }
 }
 
 ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun)
 {
-  /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
-  /// entry_t's, which will be set to NULL
+  // Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
+  // entry_t's, which will be set to NULL
+  // Must be free:d at later stages
   ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
   for (int i = 0; i < No_Buckets; i++) {
     result->buckets[i] = entry_create(int_elem(0), ptr_elem(NULL), NULL);
@@ -104,16 +105,18 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
 
 // vi börjar med NULL 0 så vi måste gå på först
 static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_function hash) {
-  if (hash == NULL) {
+  if (hash == NULL) {          
+    //  Treat keys as integers                          
     entry_t *t1 = entry->next;
-    if (t1 == NULL) {
+    if (t1 == NULL) {                                       //  We can't go any futher down the list
       return entry;
-    } else if (abs(t1->key.int_value) >= key) {
+    } else if (abs(t1->key.int_value) >= key) {             //  We found the right place to insert a new entry
       return entry;
     } else {
-      return find_previous_entry_for_key(t1, key, hash);
+      return find_previous_entry_for_key(t1, key, hash);    //  Search recursively until satisfied
     }
   } else {
+    //  Treat keys as strings
     entry_t *t1 = entry->next;
     if (t1 == NULL) {
       return entry;
@@ -132,56 +135,44 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   elem_t next_key;
   entry_t *entry;
   entry_t *next;
-  /// Search for an existing entry for a key
-  // TODO &ht
+
+  // Search for an existing entry for a key
   if (ht->hash_fun == NULL)
   {
-    // treat keys as integers
-    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
-    bucket = int_key % No_Buckets;
+    //  treat keys as integers
+    int_key = abs(key.int_value);                     //  .int_value reads the integer part of the elem_t
+    bucket = int_key % No_Buckets;                    //  find the right bucket
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
-    if (next == NULL) {
-      next_key.void_value = NULL;
-    } else {
-      next_key.int_value = abs(next->key.int_value);
-    }
+    if (next != NULL) {  
+      next_key.int_value = abs(next->key.int_value);  
+    } 
   }
   else
     {
+      //  Treat keys as string
       int_key = abs(ht->hash_fun(key));
       bucket = int_key % No_Buckets;
       entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
       next = entry->next;
-      if(next == NULL) {
-        next_key.void_value = NULL;
-      } else {
-        next_key.int_value =abs(ht->hash_fun(next->key));
+      if (next != NULL) {
+        next_key.int_value = abs(ht->hash_fun(next->key));     
       }
     }
     
-    /// Check if the next entry should be updated or not
-    if (next != NULL) {
-      if (ht->hash_fun == NULL) {
-        if (next_key.int_value == int_key) {
-          next->value = value;
-        } else {
-          key.int_value = abs(key.int_value);
-          entry->next = entry_create(key, value, next);
-        }
-      } else if (next_key.int_value == int_key) {
-        next->value = value;
-      } else {
-        entry->next = entry_create(key, value, next);
-      } 
+  if (next != NULL) {                       
+    if (next_key.int_value == int_key) {               // Check if next has our key, if not create and entry
+      next->value = value;
     } else {
-      if (ht->hash_fun == NULL) {
-        key.int_value = abs(key.int_value);
-        entry->next = entry_create(key, value, next);
-      } else {
-        entry->next = entry_create(key, value, next);
-      }
+      key.int_value = abs(key.int_value);
+      entry->next = entry_create(key, value, next);
     }
+  } else {
+    if (ht->hash_fun == NULL) {                          // Next is null => if key type is int, abs negative key to store as positive
+      key.int_value = abs(key.int_value);
+    }
+    entry->next = entry_create(key, value, next);
+  }
 }
 
 
@@ -193,55 +184,55 @@ ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
   int int_key;
   entry_t *entry;
   entry_t *next;
-  /// Search for an existing entry for a key
-  // TODO &ht
+
+  //  Search for an existing entry for a key
   if (ht->hash_fun == NULL)
   {
-    // treat keys as integers
-    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
-    bucket = int_key % No_Buckets;
+    //  Treat keys as integers
+    int_key = abs(key.int_value);                           //  .i reads the integer part of the elem_t
+    bucket = int_key % No_Buckets;                          //  Find the right bucket
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
   }
 else
   {
+    //  Treat keys as strings
     int_key = ht->hash_fun(key);
     bucket = abs(int_key % No_Buckets);
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
   }
   
-// Den innan var (next && next-> value)
-   if (next != NULL) {
-     if (ht->hash_fun == NULL) {
-        if (next->key.int_value == int_key) {
+   if (next != NULL) {                                                        
+     if (ht->hash_fun == NULL) {                                                      // Check if key type is int
+        if (next->key.int_value == int_key) {                                         // Check if keys as string are equal
           return (ioopm_option_t) { .success = true, .value = next->value };
         } else {
           return (ioopm_option_t) { .success = false};
         }
-     } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
+     } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {                       // Check if keys as string are equal
           return (ioopm_option_t) { .success = true, .value = next->value };
       } else {
         return (ioopm_option_t) { .success = false};
      }
-    } else {
+    } else {                                                                          // If next == NULL, we did not find key
      return (ioopm_option_t) { .success = false};
    }
 }
 
 ioopm_option_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
  {
-   int bucket;
+  int bucket;
   int int_key;
   entry_t *entry;
   entry_t *next;
-  /// Search for an existing entry for a key
-  // TODO &ht
+
+  // Search for an existing entry for a key
   if (ht->hash_fun == NULL)
   {
     // treat keys as integers
-    int_key = abs(key.int_value); // .i reads the integer part of the elem_t
-    bucket = int_key % No_Buckets;
+    int_key = abs(key.int_value);                   //  .i reads the integer part of the elem_t
+    bucket = int_key % No_Buckets;                  //  Find the right bucket
     entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
     next = entry->next;
   }
@@ -254,18 +245,18 @@ else
   }
    
   
-   if (next != NULL) {
+   if (next != NULL) {                                                      
     if (ht->hash_fun == NULL) {
-      if (next->key.int_value == int_key) {
+      if (next->key.int_value == int_key) {                               // Keys as ints
         ioopm_option_t options = { .success = true, .value = next->value};
         entry->next = next->next;
-        free(next);
+        free(next);                                                     
         return options;
       } else {
         ioopm_option_t options = { .success = false};
         return options;
       }
-    } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {
+    } else if (ht->hash_fun(next->key) == ht->hash_fun(key)) {            // Keys as strings
       ioopm_option_t options = { .success = true, .value = next->value};
       entry->next = next->next;
       free(next);
@@ -274,7 +265,7 @@ else
     ioopm_option_t options = { .success = false};
     return options;
    }
-  } else {
+} else {                                                                  //  If next == NULL, we did not find the element to be removed
     ioopm_option_t options = { .success = false};
     return options;
   }
@@ -308,7 +299,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
     entry_t *t = ht->buckets[i]->next;
     if (t != NULL)
     {
-      entry_destroy(t);
+      entry_destroy(t);                                  // Destroys the whole link recursively at bucket i
       ht->buckets[i]->next = NULL;
     }
   }
@@ -316,7 +307,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
-  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);  // Needs to be freed at later stages when the function is used
   
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
@@ -331,7 +322,7 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 
 ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht) 
 {
-  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);     // Needs to be freed at later stages when the function is used
   
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
@@ -373,21 +364,21 @@ static bool value_int_equiv(elem_t value_ignored, elem_t value, void *arg, bool 
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht);
-  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);      // Gives a linked list with all keys in ht
   ioopm_link_t *link = linked_list->first;
 
-  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
-  ioopm_link_t *arr = arr_v->first;
+  ioopm_list_t *list_v = ioopm_hash_table_values(ht);          // Gives a linked list with all values in ht
+  ioopm_link_t *link_itr = list_v->first;
   bool *extra = false;
-  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-    if (!pred(link->element, arr->element, arg, extra)) {
+  for (int i = 0; i < size; link = link->next, link_itr = link_itr->next, i++) { // Goes through the whole list
+    if (!pred(link->element, link_itr->element, arg, extra)) {     // If pred does not satisfy for some key/value pair => return false
       ioopm_linked_list_destroy(linked_list);
-      ioopm_linked_list_destroy(arr_v);
+      ioopm_linked_list_destroy(list_v);
       return false;   
     }
   } 
   ioopm_linked_list_destroy(linked_list);
-  ioopm_linked_list_destroy(arr_v);
+  ioopm_linked_list_destroy(list_v);
   return true;
 }
 
@@ -395,23 +386,23 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht);
-  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);        // Gives a linked list with all keys in ht
   ioopm_link_t *link = linked_list->first;
 
-  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
-  ioopm_link_t *arr = arr_v->first;
+  ioopm_list_t *list_v = ioopm_hash_table_values(ht);            // Gives a linked list with all values in ht
+  ioopm_link_t *link_itr = list_v->first;
   bool extra = false;
   extra = (ht->eq_fun != NULL);
 
-  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-    if (pred(link->element, arr->element, arg, extra)) {
+  for (int i = 0; i < size; link = link->next, link_itr = link_itr->next, i++) {  // Goes through the whole list
+    if (pred(link->element, link_itr->element, arg, extra)) {  // If pred does satisfy for some key/value pair => return true
       ioopm_linked_list_destroy(linked_list);
-      ioopm_linked_list_destroy(arr_v);
+      ioopm_linked_list_destroy(list_v);
       return true;  
     }
   } 
   ioopm_linked_list_destroy(linked_list);
-  ioopm_linked_list_destroy(arr_v);
+  ioopm_linked_list_destroy(list_v);
   return false;
 }
 
@@ -432,14 +423,14 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value) {
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
 {
   size_t size = ioopm_hash_table_size(ht); 
-  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);        // Gives a linked list with all keys from ht
   ioopm_link_t *link = linked_list->first;
 
-  ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
-  ioopm_link_t *arr = arr_v->first;
-  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-    apply_fun(link->element, arr->element, arg);
+  ioopm_list_t *list_v = ioopm_hash_table_values(ht);           // Gives a linked list with all values from ht
+  ioopm_link_t *link_itr = list_v->first;
+  for (int i = 0; i < size; link = link->next, link_itr = link_itr->next, i++) { // Goes through the whole list
+    apply_fun(link->element, link_itr->element, arg);           //  Apply function on every key/value pair
   }
   ioopm_linked_list_destroy(linked_list);
-  ioopm_linked_list_destroy(arr_v);
+  ioopm_linked_list_destroy(list_v);
 }

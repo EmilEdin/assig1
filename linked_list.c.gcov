@@ -23,51 +23,51 @@
         -:   19:    ioopm_eq_function equal_fun;
         -:   20:};
         -:   21:
-       51:   22:ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function equal_fun)
+       59:   22:ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function equal_fun)
         -:   23:{
-       51:   24:    ioopm_list_t *new_list = calloc(1, sizeof(ioopm_list_t));
-       51:   25:    new_list->first = NULL;
-       51:   26:    new_list->last = NULL;
-       51:   27:    new_list->size = 0;
-       51:   28:    new_list->equal_fun = equal_fun;
-       51:   29:    return new_list;
+       59:   24:    ioopm_list_t *new_list = calloc(1, sizeof(ioopm_list_t));
+       59:   25:    new_list->first = NULL;
+       59:   26:    new_list->last = NULL;
+       59:   27:    new_list->size = 0;
+       59:   28:    new_list->equal_fun = equal_fun;
+       59:   29:    return new_list;
         -:   30:}
         -:   31:
-      217:   32:void links_destroy(ioopm_link_t *link) {
+      163:   32:void links_destroy(ioopm_link_t *link) {
         -:   33:  // Cache the next pointer
-      217:   34:  ioopm_link_t *next = link->next;
-      217:   35:  free(link);
-      217:   36:  if (next != NULL) {
-      168:   37:    links_destroy(next);
+      163:   34:  ioopm_link_t *next = link->next;
+      163:   35:  free(link);
+      163:   36:  if (next != NULL) {
+      112:   37:    links_destroy(next);
         -:   38:  }
-      217:   39:}
+      163:   39:}
         -:   40:
-       51:   41:void ioopm_linked_list_destroy(ioopm_list_t *list) {
-       51:   42:    if (list->first == NULL && list->last == NULL) {
-        2:   43:        free(list);
+       59:   41:void ioopm_linked_list_destroy(ioopm_list_t *list) {
+       59:   42:    if (list->first == NULL && list->last == NULL) {
+        8:   43:        free(list);
         -:   44:    } else {
-       49:   45:        links_destroy(list->first);
-       49:   46:        free(list);
+       51:   45:        links_destroy(list->first);
+       51:   46:        free(list);
         -:   47:    }
-       51:   48:}
+       59:   48:}
         -:   49:
-      217:   50:void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
+      163:   50:void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
         -:   51:{
-      217:   52:    ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
+      163:   52:    ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
         -:   53:    
-      217:   54:    new_link->element = value;
-      217:   55:    new_link->next = NULL;
+      163:   54:    new_link->element = value;
+      163:   55:    new_link->next = NULL;
         -:   56:    // Increment size by one
-      217:   57:    list->size = list->size + 1;
-      217:   58:    if (list->last == NULL && list->first == NULL) {
+      163:   57:    list->size = list->size + 1;
+      163:   58:    if (list->last == NULL && list->first == NULL) {
         -:   59:        // TODO: ska man uppdatera first också till new_link? Svar: Det hjälper att göra så när man använder list_destroy.
-       49:   60:        list->first = new_link;
-       49:   61:        list->last = new_link;
+       51:   60:        list->first = new_link;
+       51:   61:        list->last = new_link;
         -:   62:    } else {
-      168:   63:        list->last->next = new_link;
-      168:   64:        list->last = new_link;
+      112:   63:        list->last->next = new_link;
+      112:   64:        list->last = new_link;
         -:   65:    }
-      217:   66:}
+      163:   66:}
         -:   67:
     #####:   68:void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value)
         -:   69:{

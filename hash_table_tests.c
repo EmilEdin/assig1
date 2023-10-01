@@ -15,6 +15,10 @@ struct entry
   entry_t *next; // points to the next entry (possibly NULL)
 };
 
+bool string_eq(elem_t arg1, elem_t arg2) {
+  return strcmp(arg1.string_value, arg2.string_value);
+}
+
 int string_to_int(elem_t str){
   int new_int = atoi(str.string_value);
   return new_int;
@@ -27,7 +31,6 @@ struct hash_table
   entry_t *buckets[No_Buckets];
   hash_function hash_fun;
   ioopm_predicate eq_fun;
-
 };
 
 typedef struct option ioopm_option_t;
@@ -95,6 +98,7 @@ void test_insert_once()
   ioopm_hash_table_insert(ht_str, ptr_elem("4"), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht_str, ptr_elem("72"), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht_str, ptr_elem("21"), ptr_elem("Hej"));
+  ioopm_hash_table_insert(ht_str, ptr_elem("21"), ptr_elem("Sko"));
   ioopm_option_t struct_test1 = ioopm_hash_table_lookup(ht_str, ptr_elem("72"));
   char *struct_value_of_test1 = struct_test1.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test1);
@@ -103,7 +107,7 @@ void test_insert_once()
   ioopm_hash_table_insert(ht, int_elem(6), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht, int_elem(40), ptr_elem("Hej"));
   ioopm_hash_table_insert(ht, int_elem(23), ptr_elem("Hej"));
-   ioopm_hash_table_insert(ht, int_elem(23), ptr_elem("Sko"));
+  ioopm_hash_table_insert(ht, int_elem(23), ptr_elem("Sko"));
   ioopm_option_t struct_test = ioopm_hash_table_lookup(ht, int_elem(6));
   char *struct_value_of_test = struct_test.value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test);
