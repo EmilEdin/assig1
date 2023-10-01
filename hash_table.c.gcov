@@ -2,6 +2,7 @@
         -:    0:Graph:./hash_table.gcno
         -:    0:Data:./hash_table.gcda
         -:    0:Runs:1
+        -:    0:Source is newer than graph
         -:    1:#include "hash_table.h"
         -:    2:#include "common.h"
         -:    3:#include <stdlib.h>
@@ -57,7 +58,7 @@
        43:   53:    entry_destroy(next); // Destroy every link recursively untill we hit next == NULL
         -:   54:  }
       316:   55:}
-        -:   56:
+        -:   56:// If hash_fun is NULL, then keys are ints, otherwise keys are strings. And if eq_fun NULL then values are ints, otherise values are strings.
        16:   57:ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun)
         -:   58:{
         -:   59:  // Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
@@ -345,11 +346,11 @@
         -:  341:{
         -:  342:   // If x == True, keys are strings, else keys are ints
        28:  343:  bool int_or_str = x;
-        -:  344:
+        -:  344:  
        28:  345:  if(int_or_str) {
         6:  346:    elem_t *other_key_ptr = arg;
         6:  347:    char *other_key = other_key_ptr->string_value;
-        6:  348:    return key.string_value == other_key; 
+        6:  348:    return strcmp(key.string_value, other_key) == 0;
         -:  349:  } else {
        22:  350:    elem_t *other_key_ptr = arg;
        22:  351:    int other_key = other_key_ptr->int_value;

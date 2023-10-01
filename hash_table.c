@@ -53,7 +53,7 @@ void entry_destroy(entry_t *entry) {
     entry_destroy(next); // Destroy every link recursively untill we hit next == NULL
   }
 }
-
+// If hash_fun is NULL, then keys are ints, otherwise keys are strings. And if eq_fun NULL then values are ints, otherise values are strings.
 ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun)
 {
   // Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
@@ -341,11 +341,11 @@ static bool key_equiv(elem_t key, elem_t value_ignored, void *arg, bool x)
 {
    // If x == True, keys are strings, else keys are ints
   bool int_or_str = x;
-
+  
   if(int_or_str) {
     elem_t *other_key_ptr = arg;
     char *other_key = other_key_ptr->string_value;
-    return key.string_value == other_key; 
+    return strcmp(key.string_value, other_key) == 0;
   } else {
     elem_t *other_key_ptr = arg;
     int other_key = other_key_ptr->int_value;

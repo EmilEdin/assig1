@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 typedef struct entry entry_t;
 
 struct entry
@@ -19,9 +20,16 @@ bool string_eq(elem_t arg1, elem_t arg2) {
   return strcmp(arg1.string_value, arg2.string_value);
 }
 
-int string_to_int(elem_t str){
-  int new_int = atoi(str.string_value);
-  return new_int;
+int string_to_int(elem_t str) {
+    int hash = 5381;
+    unsigned char *ptr = (unsigned char *)str.string_value;
+
+    while (*ptr) {
+        hash = ((hash << 5) + hash) + *ptr; // hash * 33 + c
+        ptr++;
+    }
+
+    return hash;
 }
 
 #define No_Buckets 17
@@ -304,9 +312,9 @@ void test_hash_table_values(void) {
   ioopm_hash_table_destroy(ht);
 }
 
-void test_hash_table_has_key_int(void) {
+void test_hash_table_has_key(void) {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL, NULL);
-  ioopm_hash_table_t *ht_str = ioopm_hash_table_create(NULL, value_equiv);
+  ioopm_hash_table_t *ht_str = ioopm_hash_table_create(string_to_int, value_equiv);
 
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
   
@@ -320,12 +328,13 @@ void test_hash_table_has_key_int(void) {
 
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, int_elem(53)));
   
-  ioopm_hash_table_insert(ht_str, ptr_elem("5"), ptr_elem("1three"));
-  ioopm_hash_table_insert(ht_str, ptr_elem("6"), ptr_elem("1ten"));
+  ioopm_hash_table_insert(ht_str, ptr_elem("hej"), ptr_elem("1three"));
+  ioopm_hash_table_insert(ht_str, ptr_elem("hallo"), ptr_elem("1ten"));
   ioopm_hash_table_insert(ht_str, ptr_elem("7"), ptr_elem("1fortytwo"));
-
-  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht_str, ptr_elem("5")));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht_str, ptr_elem("6")));
+  
+  
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht_str, ptr_elem("hej")));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht_str, ptr_elem("hallo")));
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht_str, ptr_elem("8")));
 
   ioopm_hash_table_destroy(ht);
@@ -494,7 +503,7 @@ int main() {
     (CU_add_test(my_test_suite, "Test for clear functionality", test_hash_table_clear) == NULL) ||
     (CU_add_test(my_test_suite, "Test for keys functionality", test_hash_table_keys) == NULL) ||
     (CU_add_test(my_test_suite, "Test for values functionality", test_hash_table_values) == NULL) ||
-    (CU_add_test(my_test_suite, "Test for has_key functionality", test_hash_table_has_key_int) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for has_key functionality", test_hash_table_has_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for has_value functionality", test_hash_table_has_value) == NULL) ||
     (CU_add_test(my_test_suite, "Test for apply_to_all functionality", test_hash_table_apply_to_all) == NULL) ||
     (CU_add_test(my_test_suite, "Test for all functionality", test_hash_table_all) == NULL) ||
