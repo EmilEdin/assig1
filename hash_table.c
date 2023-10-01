@@ -24,6 +24,7 @@ struct hash_table
 {
   entry_t *buckets[No_Buckets];
   hash_function hash_fun;
+  ioopm_predicate eq_fun;
 };
 
  typedef struct option ioopm_option_t;
@@ -53,7 +54,7 @@ void entry_destroy(entry_t *entry) {
   }
 }
 
-ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun)
+ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun)
 {
   /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
   /// entry_t's, which will be set to NULL
@@ -62,6 +63,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun)
     result->buckets[i] = entry_create(int_elem(0), ptr_elem(NULL), NULL);
   }
   result->hash_fun = hash_fun;
+  result->eq_fun = eq_fun;
   return result;
 }
 
@@ -122,6 +124,7 @@ static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_functi
     }
   }
 }
+
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
   int bucket;
@@ -342,36 +345,29 @@ ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 
 
 
-static bool key_equiv(elem_t key, elem_t value_ignored, void *x)
+
+static bool key_equiv(elem_t key, elem_t value_ignored, void *arg, bool x)
 {
-   // If x == True, keys are ints, else keys are strings
+   // If x == True, keys are strings, else keys are ints
   bool int_or_str = x;
 
   if(int_or_str) {
-    elem_t *other_key_ptr = x;
+    elem_t *other_key_ptr = arg;
     char *other_key = other_key_ptr->string_value;
     return key.string_value == other_key; 
   } else {
-    elem_t *other_key_ptr = x;
+    elem_t *other_key_ptr = arg;
     int other_key = other_key_ptr->int_value;
     return key.int_value == other_key;
   }
 }
 
-static bool value_equiv(elem_t key_ignored, elem_t value, void *x)
-{
-  // If x == True, keys are ints, else keys are strings
-  bool int_or_str = x;
 
-  if(int_or_str) {
-    elem_t *other_value_ptr = x;
-    char *other_value = other_value_ptr->string_value;
-    return strcmp(value.string_value, other_value) == 0;
-  } else {
-    elem_t *other_value_ptr = x;
-    int other_value = other_value_ptr->int_value;
-    return value.int_value == other_value;
-  }
+static bool value_int_equiv(elem_t value_ignored, elem_t value, void *arg, bool x)
+{
+  int *other_key_ptr = arg;
+  int other_key = *other_key_ptr;
+  return value.int_value == other_key;
 }
 
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
@@ -382,8 +378,9 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 
   ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
   ioopm_link_t *arr = arr_v->first;
-  for (int i = 0; i < size; link = link->next, i++) {
-    if (!pred(link->element, arr->element, arg)) {
+  bool *extra = false;
+  for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
+    if (!pred(link->element, arr->element, arg, extra)) {
       ioopm_linked_list_destroy(linked_list);
       ioopm_linked_list_destroy(arr_v);
       return false;   
@@ -403,15 +400,11 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 
   ioopm_list_t *arr_v = ioopm_hash_table_values(ht);
   ioopm_link_t *arr = arr_v->first;
-  void *extra;
-  if (ht->hash_fun != NULL) {
-    extra = true;
-  } else {
-    extra = false;
-  }
+  bool extra = false;
+  extra = (ht->eq_fun != NULL);
 
   for (int i = 0; i < size; link = link->next, arr = arr->next, i++) {
-    if (pred(link->element, arr->element, extra)) {
+    if (pred(link->element, arr->element, arg, extra)) {
       ioopm_linked_list_destroy(linked_list);
       ioopm_linked_list_destroy(arr_v);
       return true;  
@@ -427,7 +420,12 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key) {
 }
 
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value) {
-  return ioopm_hash_table_any(ht, value_equiv, &value);
+  // Values are strings
+  if (ht->eq_fun != NULL) {
+    return ioopm_hash_table_any(ht, ht->eq_fun, &value);
+  }
+  // Values are ints
+  return ioopm_hash_table_any(ht, value_int_equiv, &value);
 }
 
 

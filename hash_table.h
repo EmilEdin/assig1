@@ -19,17 +19,20 @@
  * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
 
+
+
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option ioopm_option_t;
 
 
 
-typedef bool(*ioopm_predicate)(elem_t key, elem_t value, void *extra);
+
+typedef bool(*ioopm_predicate)(elem_t key, elem_t value, void *arg, bool extra);
 typedef void(*ioopm_apply_function)(elem_t key, elem_t value, void *extra);
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
-ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun);
+ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun);
 
 /// @brief Delete a hash table and free its memory
 /// @param ht a hash table to be deleted

@@ -9,6 +9,7 @@ typedef union {
   void *void_value;
 } elem_t;
 
+
 typedef int (*hash_function)(elem_t key);
 
 /// Compares two elements and returns true if they are equal
