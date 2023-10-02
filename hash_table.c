@@ -309,16 +309,14 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
   ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);  // Needs to be freed at later stages when the function is used
-  long i = 0;
+
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
     while (t != NULL) {
       ioopm_linked_list_append(new_list, t->key);
       t = t->next;
-      i++;
     }
   }
-  printf("%ld", i);
   return new_list;
 }
 
@@ -410,7 +408,26 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
 }
 
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key) {
-  return ioopm_hash_table_any(ht, key_equiv, &key);
+
+  size_t size = ioopm_hash_table_size(ht);
+  ioopm_list_t *linked_list = ioopm_hash_table_keys(ht);        // Gives a linked list with all keys in ht
+  ioopm_link_t *link = linked_list->first;
+
+  ioopm_list_t *list_v = ioopm_hash_table_values(ht);            // Gives a linked list with all values in ht
+  ioopm_link_t *link_itr = list_v->first;
+  bool extra = false;
+  extra = (ht->hash_fun != NULL);
+
+  for (int i = 0; i < size; link = link->next, link_itr = link_itr->next, i++) {  // Goes through the whole list
+    if (key_equiv(link->element, link_itr->element, &key, extra)) {  // If pred does satisfy for some key/value pair => return true
+      ioopm_linked_list_destroy(linked_list);
+      ioopm_linked_list_destroy(list_v);
+      return true;  
+    }
+  } 
+  ioopm_linked_list_destroy(linked_list);
+  ioopm_linked_list_destroy(list_v);
+  return false;
 }
 
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value) {

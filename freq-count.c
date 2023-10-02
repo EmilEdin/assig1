@@ -82,7 +82,7 @@ bool string_eq(elem_t e1, elem_t e2, void *arg, bool x)
 
 int main(int argc, char *argv[])
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(string_sum_hash, string_eq);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(string_sum_hash, NULL);
 
   if (argc > 1)
   {
@@ -112,15 +112,8 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < size; ++i)
     {
-      // FIXME: Update to match your own interface, error handling, etc.
-      ioopm_option_t t = ioopm_hash_table_lookup(ht, ptr_elem(keys[i]));
-      if (t.success) {
-        int freq = t.value.int_value;
-        printf("%s: %d\n", keys[i], freq);
-      } else {
-        printf("Huge failer i hatethis");
-      }
-      // int freq = (ioopm_hash_table_lookup(ht, ptr_elem(keys[i]))).value.int_value;
+      int freq = (ioopm_hash_table_lookup(ht, ptr_elem(keys[i]))).value.int_value;
+      printf("%s: %d\n", keys[i], freq);
 
       
     }
