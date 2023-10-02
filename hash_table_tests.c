@@ -110,6 +110,12 @@ void test_insert_once()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create(NULL, NULL);
   ioopm_hash_table_t *ht_str = ioopm_hash_table_create(string_to_int, NULL);
+
+  // HUGE Test
+  
+  ioopm_hash_table_t *ht_huge_key_int = ioopm_hash_table_create(NULL, NULL);
+  ioopm_hash_table_t *ht_huge_key_string = ioopm_hash_table_create(string_to_int, NULL);
+
   for (int i = 0; i <= 16; ++i) {
     ioopm_option_t answer = ioopm_hash_table_lookup(ht, int_elem(i));
     char *struct_value = answer.value.string_value;
@@ -123,9 +129,9 @@ void test_insert_once()
   ioopm_hash_table_insert(ht_str, ptr_elem("1"), int_elem(69));
   ioopm_hash_table_insert(ht_str, ptr_elem("18"), int_elem(420));
   ioopm_hash_table_insert(ht_str, ptr_elem("35"), int_elem(66));
-  ioopm_hash_table_insert(ht_str, ptr_elem("72"), int_elem(42));
+  ioopm_hash_table_insert(ht_str, ptr_elem("100"), int_elem(42));
 
-  ioopm_option_t struct_test1 = ioopm_hash_table_lookup(ht_str, ptr_elem("72"));
+  ioopm_option_t struct_test1 = ioopm_hash_table_lookup(ht_str, ptr_elem("100"));
   char *struct_value_of_test1 = struct_test1.value.string_value;
   CU_ASSERT_PTR_NOT_NULL(struct_value_of_test1);
 
@@ -155,8 +161,49 @@ void test_insert_once()
   CU_ASSERT_PTR_NOT_NULL(test_zero_key);
 
 
+  // HUGE Test
+  
+  /* 
+  Test HUGE int keys
+  */
+  for (int i = 0; i < 1257; i++) {
+    ioopm_hash_table_insert(ht_huge_key_int, int_elem(i), int_elem(2*i));
+  }
+  for (int i = 0; i < 1257; i++) {
+    // Make sure all the keys are inserted in the hash_table
+    ioopm_option_t inserted = ioopm_hash_table_lookup(ht_huge_key_int, int_elem(i));
+    bool is_there = inserted.success;
+    elem_t the_value = inserted.value;
+    CU_ASSERT_TRUE(is_there);
+    CU_ASSERT_EQUAL(the_value.int_value, i*2);
+    bool key_is_there = ioopm_hash_table_has_key(ht_huge_key_int, int_elem(i));
+    CU_ASSERT_TRUE(key_is_there);
+  }
+  // Test size works for big numbers.
+  CU_ASSERT_EQUAL(1257, ioopm_hash_table_size(ht_huge_key_int));
+  CU_ASSERT_TRUE(1257 == ioopm_hash_table_size(ht_huge_key_int));
+  // Make sure keys list contains all the correct keys.
+  ioopm_list_t *list_of_key_ints = ioopm_hash_table_keys(ht_huge_key_int);
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht_huge_key_int), ioopm_linked_list_size(list_of_key_ints));
+  CU_ASSERT_TRUE(1257 == ioopm_linked_list_size(list_of_key_ints));
+  for (int i = 0; i < 1257; i++) {
+    CU_ASSERT_TRUE(ioopm_linked_list_contains(list_of_key_ints, int_elem(i)));
+  }
+
+  /*
+  Test HUGE string keys
+  */
+  
+  
+
+
  ioopm_hash_table_destroy(ht);
  ioopm_hash_table_destroy(ht_str);
+ // For the big ones
+ ioopm_hash_table_destroy(ht_huge_key_int);
+ ioopm_hash_table_destroy(ht_huge_key_string);
+ ioopm_linked_list_destroy(list_of_key_ints);
+
 }
 
 void test_hash_table_size(void)

@@ -111,7 +111,7 @@ static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_functi
     entry_t *t1 = entry->next;
     if (t1 == NULL) {                                       //  We can't go any futher down the list
       return entry;
-    } else if (abs(t1->key.int_value) >= key) {             //  We found the right place to insert a new entry
+    } else if (t1->key.int_value >= key) {             //  We found the right place to insert a new entry
       return entry;
     } else {
       return find_previous_entry_for_key(t1, key, hash);    //  Search recursively until satisfied
@@ -121,14 +121,19 @@ static entry_t *find_previous_entry_for_key(entry_t *entry, int key, hash_functi
     entry_t *t1 = entry->next;
     if (t1 == NULL) {
       return entry;
-    } else if (abs(hash(t1->key)) >= key) {
+    } else if (hash(t1->key) >= key) {
       return entry;
     } else {
       return find_previous_entry_for_key(t1, key, hash);
     }
   }
 }
+/*
 
+do strcmp first then do the other hash function comaprasion
+
+possible that two strings have the same hash value - solutions store the actual key 
+*/
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
   int bucket;
@@ -150,31 +155,40 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     } 
   }
   else
-    {
-      //  Treat keys as string
-      int_key = abs(ht->hash_fun(key));
-      bucket = int_key % No_Buckets;
-      entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun);
-      next = entry->next;
-      if (next != NULL) {
-        next_key.int_value = abs(ht->hash_fun(next->key));     
-      }
+  {
+    //  Treat keys as string
+    int_key = abs(ht->hash_fun(key)); // hash(vulputate)
+    bucket = int_key % No_Buckets;
+    entry = find_previous_entry_for_key((*ht).buckets[bucket], int_key, ht->hash_fun); // facilisis
+    next = entry->next; // tristique
+    if (next != NULL) {
+      next_key.int_value = abs(ht->hash_fun(next->key)); // hash(tristique)
     }
-    
-  if (next != NULL) {                       
+    if (strcmp(key.string_value, "vulputate") == 0) {    
+      printf("420 key1: %s key2 %s ::: %d\n", entry->key.string_value, next->key.string_value, next_key.int_value == int_key);
+    }
+  }
+
+  if (next != NULL) {      
+    // strcmp                 
     if (next_key.int_value == int_key) {               // Check if next has our key, if not create and entry
       next->value = value;
     } else {
       //key.int_value = abs(key.int_value);
+      assert(value.int_value == 1);
       entry->next = entry_create(key, value, next);
     }
   } else {
     if (ht->hash_fun == NULL) {                          // Next is null => if key type is int, abs negative key to store as positive
       key.int_value = abs(key.int_value);
     }
+    assert(value.int_value == 1);
     entry->next = entry_create(key, value, next);
   }
 }
+
+// 3 5 5 5
+//     p n
 
 
 
@@ -314,6 +328,10 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
     entry_t *t = ht->buckets[i]->next;
     while (t != NULL) {
       ioopm_linked_list_append(new_list, t->key);
+      if (strcmp(t->key.string_value, "vulputate") == 0) {
+        
+        printf("xD\n");
+      }
       t = t->next;
     }
   }
@@ -406,7 +424,7 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
   ioopm_linked_list_destroy(list_v);
   return false;
 }
-
+// Now we are here trying to figure the problem out, it never finds the string
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key) {
 
   size_t size = ioopm_hash_table_size(ht);

@@ -9,6 +9,17 @@
 
 #define Delimiters "+-#@()[]{}.,:;!? \t\n\r"
 
+int string_sum_hash(elem_t e)
+{
+  char *str = e.string_value;
+  int result = 0;
+  do
+  {
+    result += *str;
+  } while (*++str != '\0');
+  return result;
+}
+
 static int cmpstringp(const void *p1, const void *p2)
 {
   return strcmp(*(char *const *)p1, *(char *const *)p2);
@@ -24,7 +35,10 @@ void process_word(char *word, ioopm_hash_table_t *ht)
   // FIXME: Rewrite to match your own interface, error-handling, etc.
   int freq =
       ioopm_hash_table_has_key(ht, ptr_elem(word)) ? (ioopm_hash_table_lookup(ht, ptr_elem(word))).value.int_value : 0;
-
+  if (strcmp(word, "vulputate") == 0) {
+    
+    printf("LOL %d %d\n", freq, ioopm_hash_table_has_key(ht, ptr_elem(word)));
+  }
   if (freq >= 1)
   {
     ioopm_hash_table_insert(ht, ptr_elem(word), int_elem(freq + 1));
@@ -64,16 +78,7 @@ void process_file(char *filename, ioopm_hash_table_t *ht)
   fclose(f);
 }
 
-int string_sum_hash(elem_t e)
-{
-  char *str = e.string_value;
-  int result = 0;
-  do
-  {
-    result += *str;
-  } while (*++str != '\0');
-  return result;
-}
+
 
 bool string_eq(elem_t e1, elem_t e2, void *arg, bool x)
 {
@@ -117,10 +122,13 @@ int main(int argc, char *argv[])
 
       
     }
-    //printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).success);
-    //printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).value.int_value);
-    //printf("\n%d\n", string_sum_hash(ptr_elem("vulputate")));
-    
+    printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).success);
+    printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).value.int_value);
+    printf("\n%d\n", string_sum_hash(ptr_elem("vulputate")));
+    ioopm_option_t a = ioopm_hash_table_remove(ht, ptr_elem("vulputate"));
+    printf("\n%d\n", a.success);
+    ioopm_option_t b = ioopm_hash_table_remove(ht, ptr_elem("vulputate"));
+    printf("\n%d\n", b.success);
     for (int i = 0; i < keys_list->size; ++i)
     {
       free(keys[i]);
