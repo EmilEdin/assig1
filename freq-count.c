@@ -35,10 +35,7 @@ void process_word(char *word, ioopm_hash_table_t *ht)
   // FIXME: Rewrite to match your own interface, error-handling, etc.
   int freq =
       ioopm_hash_table_has_key(ht, ptr_elem(word)) ? (ioopm_hash_table_lookup(ht, ptr_elem(word))).value.int_value : 0;
-  if (strcmp(word, "vulputate") == 0) {
-    
-    printf("LOL %d %d\n", freq, ioopm_hash_table_has_key(ht, ptr_elem(word)));
-  }
+  
   if (freq >= 1)
   {
     ioopm_hash_table_insert(ht, ptr_elem(word), int_elem(freq + 1));
@@ -99,6 +96,7 @@ int main(int argc, char *argv[])
     // FIXME: If the keys are returned as a list, transfer them into
     // an array to use `sort_keys` (perhaps using an iterator?)
     ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
+    
 
     ioopm_list_t *keys_buf = keys_list;
     char **keys = calloc(1, sizeof(char *) * ioopm_linked_list_size(keys_list));
@@ -119,9 +117,10 @@ int main(int argc, char *argv[])
     {
       int freq = (ioopm_hash_table_lookup(ht, ptr_elem(keys[i]))).value.int_value;
       printf("%s: %d\n", keys[i], freq);
-
       
     }
+   
+    /*
     printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).success);
     printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).value.int_value);
     printf("\n%d\n", string_sum_hash(ptr_elem("vulputate")));
@@ -129,6 +128,9 @@ int main(int argc, char *argv[])
     printf("\n%d\n", a.success);
     ioopm_option_t b = ioopm_hash_table_remove(ht, ptr_elem("vulputate"));
     printf("\n%d\n", b.success);
+    */
+
+   
     for (int i = 0; i < keys_list->size; ++i)
     {
       free(keys[i]);
