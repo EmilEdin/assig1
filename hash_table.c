@@ -53,6 +53,7 @@ void entry_destroy(entry_t *entry) {
     entry_destroy(next); // Destroy every link recursively untill we hit next == NULL
   }
 }
+
 // If hash_fun is NULL, then keys are ints, otherwise keys are strings. And if eq_fun NULL then values are ints, otherise values are strings.
 ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun)
 {
@@ -164,7 +165,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     if (next_key.int_value == int_key) {               // Check if next has our key, if not create and entry
       next->value = value;
     } else {
-      key.int_value = abs(key.int_value);
+      //key.int_value = abs(key.int_value);
       entry->next = entry_create(key, value, next);
     }
   } else {
@@ -308,14 +309,16 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
   ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);  // Needs to be freed at later stages when the function is used
-  
+  long i = 0;
   for (int i = 0; i < No_Buckets; i++) {
     entry_t *t = ht->buckets[i]->next;
     while (t != NULL) {
       ioopm_linked_list_append(new_list, t->key);
       t = t->next;
+      i++;
     }
   }
+  printf("%ld", i);
   return new_list;
 }
 

@@ -7,7 +7,6 @@
 #include "common.h"
 #include "hash_table.c"
 
-
 #define Delimiters "+-#@()[]{}.,:;!? \t\n\r"
 
 static int cmpstringp(const void *p1, const void *p2)
@@ -24,13 +23,14 @@ void process_word(char *word, ioopm_hash_table_t *ht)
 {
   // FIXME: Rewrite to match your own interface, error-handling, etc.
   int freq =
-    ioopm_hash_table_has_key(ht, ptr_elem(word)) ?
-    (ioopm_hash_table_lookup(ht, ptr_elem(word))).value.int_value:
-    0;
-  
-  if (freq >= 1) {
+      ioopm_hash_table_has_key(ht, ptr_elem(word)) ? (ioopm_hash_table_lookup(ht, ptr_elem(word))).value.int_value : 0;
+
+  if (freq >= 1)
+  {
     ioopm_hash_table_insert(ht, ptr_elem(word), int_elem(freq + 1));
-  } else {
+  }
+  else
+  {
     ioopm_hash_table_insert(ht, ptr_elem(strdup(word)), int_elem(freq + 1));
   }
 }
@@ -69,10 +69,9 @@ int string_sum_hash(elem_t e)
   char *str = e.string_value;
   int result = 0;
   do
-    {
-      result += *str;
-    }
-  while (*++str != '\0');
+  {
+    result += *str;
+  } while (*++str != '\0');
   return result;
 }
 
@@ -92,17 +91,17 @@ int main(int argc, char *argv[])
       process_file(argv[i], ht);
     }
 
-    // FIXME: If the keys are returned as a list, transfer them into 
+    // FIXME: If the keys are returned as a list, transfer them into
     // an array to use `sort_keys` (perhaps using an iterator?)
     ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
 
- 
     ioopm_list_t *keys_buf = keys_list;
     char **keys = calloc(1, sizeof(char *) * ioopm_linked_list_size(keys_list));
-    elem_t *t;
+
     ioopm_link_t *keys_link = keys_list->first;
     int counter = 0;
-    while (keys_link != NULL) {
+    while (keys_link != NULL)
+    {
       keys[counter] = keys_link->element.string_value;
       counter = counter + 1;
       keys_link = keys_link->next;
@@ -114,27 +113,33 @@ int main(int argc, char *argv[])
     for (int i = 0; i < size; ++i)
     {
       // FIXME: Update to match your own interface, error handling, etc.
-      int freq = (ioopm_hash_table_lookup(ht, ptr_elem(keys[i]))).value.int_value;
-
-      printf("%s: %d\n", keys[i], freq);
+      ioopm_option_t t = ioopm_hash_table_lookup(ht, ptr_elem(keys[i]));
+      if (t.success) {
+        int freq = t.value.int_value;
+        printf("%s: %d\n", keys[i], freq);
+      } else {
+        printf("Huge failer i hatethis");
+      }
+      // int freq = (ioopm_hash_table_lookup(ht, ptr_elem(keys[i]))).value.int_value;
 
       
     }
-
+    //printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).success);
+    //printf("\n%d\n", ioopm_hash_table_lookup(ht, ptr_elem("vulputate")).value.int_value);
+    //printf("\n%d\n", string_sum_hash(ptr_elem("vulputate")));
+    
     for (int i = 0; i < keys_list->size; ++i)
     {
       free(keys[i]);
     }
-   
+
     free(keys);
     ioopm_linked_list_destroy(keys_buf);
-    
   }
   else
   {
     puts("Usage: freq-count file1 ... filen");
   }
-  
+
   ioopm_hash_table_destroy(ht);
 }
-
