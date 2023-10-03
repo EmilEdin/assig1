@@ -135,6 +135,7 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element) {
 }
 
 elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index) {
+    assert(list->size > index);
     int counter = 1;
     if (index == 0 && list->first->next != NULL) { // (When we want to remove the first element in the list)
         // We move the pointer of the first element to the next element in the list 
