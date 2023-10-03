@@ -155,7 +155,7 @@ void test_get_link(void)
   ioopm_linked_list_append(new_list, int_elem(124));
 
   CU_ASSERT_EQUAL(ioopm_linked_list_get(new_list, 2).int_value, 124);
-  
+
   ioopm_linked_list_destroy(new_list);
 }
 
@@ -173,14 +173,18 @@ void test_remove_element_from_list(void) {
   CU_ASSERT_EQUAL(removed_first_element, 20); // Ensure that the removed element is 20
   CU_ASSERT_EQUAL(new_list->first->element.int_value, 3);
   CU_ASSERT_EQUAL(new_list->last->element.int_value, 1);
+
   // Tests for removing last element
   int remove_last_element = new_list->size - 1;
   int removed_last_element = ioopm_linked_list_remove(new_list, remove_last_element).int_value;
   CU_ASSERT_EQUAL(removed_last_element, 1);
   CU_ASSERT_EQUAL(new_list->last->element.int_value, 100);
+
   // Tests for removing element in the middle
   int removed_element = ioopm_linked_list_remove(new_list, 2).int_value;
   CU_ASSERT_EQUAL(removed_element, 69);
+  CU_ASSERT_FALSE(ioopm_linked_list_contains(new_list, int_elem(69)));
+
   // Check that the rest of the elements are in the list and in same order
   CU_ASSERT_EQUAL(new_list->first->element.int_value, 3);
   CU_ASSERT_EQUAL(new_list->first->next->element.int_value, 420);
@@ -188,6 +192,7 @@ void test_remove_element_from_list(void) {
 
   int another_removed_element = ioopm_linked_list_remove(new_list, 1).int_value;
   CU_ASSERT_EQUAL(another_removed_element, 420);
+
   // Check that the rest of the elements are in the list and in same order
   CU_ASSERT_EQUAL(new_list->first->element.int_value, 3);
   CU_ASSERT_EQUAL(new_list->first->next->element.int_value, 100);
@@ -303,6 +308,7 @@ void test_linked_list_fun_all(void)
 void test_iter_create(void)
 {
     ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+
     ioopm_linked_list_prepend(new_list, int_elem(1));
     ioopm_linked_list_prepend(new_list, int_elem(100));
     ioopm_linked_list_prepend(new_list, int_elem(69));
@@ -325,6 +331,7 @@ void test_iter_next(void)
     ioopm_linked_list_prepend(new_list, int_elem(420));
 
     ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+
     ioopm_iterator_next(new_iter);
     CU_ASSERT_EQUAL(new_iter->current->element.int_value, 69);
     ioopm_iterator_next(new_iter);
@@ -346,6 +353,7 @@ void test_iter_current(void)
     ioopm_linked_list_prepend(new_list, int_elem(420));
 
     ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+
     CU_ASSERT_EQUAL(ioopm_iterator_current(new_iter).int_value, 420);
 
     ioopm_iterator_destroy(new_iter);
@@ -363,6 +371,7 @@ void test_iter_reset(void)
 
 
     ioopm_list_iterator_t *new_iter = ioopm_list_iterator(new_list);
+    
     ioopm_iterator_next(new_iter);
     CU_ASSERT_EQUAL(new_iter->current->element.int_value, 69);
     ioopm_iterator_next(new_iter);
