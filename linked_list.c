@@ -109,6 +109,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value) {
 
 elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
 {
+    assert(list->size > index);
     int counter = index;
     ioopm_link_t *list_itr = list->first;
     while (counter != 0) {

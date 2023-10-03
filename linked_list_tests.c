@@ -55,14 +55,11 @@ void test_create_list(void)
 
 void test_destroy_list(void)
 {
-    ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
-  
-    ioopm_linked_list_append(new_list, int_elem(2));
-    ioopm_linked_list_append(new_list, int_elem(3));
-    CU_ASSERT_PTR_NOT_NULL(new_list->last);
-    // Måste vara remove function
-   // ioopm_linked_list_destroy(new_list);
-   // CU_ASSERT_PTR_NULL(new_list);
+  ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+
+  ioopm_linked_list_append(new_list, int_elem(2));
+  ioopm_linked_list_append(new_list, int_elem(3));
+  CU_ASSERT_PTR_NOT_NULL(new_list->last);
   ioopm_linked_list_destroy(new_list);
 }
 
@@ -102,31 +99,35 @@ void test_insert_link(void) {
   ioopm_linked_list_prepend(new_list, int_elem(2));
   ioopm_linked_list_prepend(new_list, int_elem(5));
   ioopm_linked_list_prepend(new_list, int_elem(124));
-  // Checks that inserting at before first and after last element works.
+
+  // Checks that inserting before first works
   ioopm_linked_list_insert(new_list, 0, int_elem(69));
   CU_ASSERT_EQUAL(new_list->first->element.int_value, 69);
+
+  // Checks that inserting after last works
   ioopm_linked_list_insert(new_list, ioopm_linked_list_size(new_list), int_elem(100));
   CU_ASSERT_EQUAL(new_list->last->element.int_value, 100);
 
+  // Checks that inserting on a key that already exists, updates elements value
   ioopm_linked_list_insert(new_list, 2, int_elem(1337));
   CU_ASSERT_EQUAL(new_list->first->next->element.int_value, 1337);
   
-  int size = ioopm_linked_list_size(new_list);
-  for (int i = 0; i < size; i++) {
-    ioopm_linked_list_insert(new_list, i, int_elem(i*i));
-  }
-//MER TEST?
   ioopm_linked_list_destroy(new_list);
 }
 
 void test_size_n_empty_list(void) {
   ioopm_list_t *new_list = ioopm_linked_list_create(int_compare);
+
   bool is_empty = ioopm_linked_list_is_empty(new_list);
   CU_ASSERT_TRUE(is_empty);
   for (int i = 0; i < 20; i++) {
     ioopm_linked_list_prepend(new_list, int_elem(i));
   }
-  CU_ASSERT_EQUAL(new_list->size, 20);
+
+  CU_ASSERT_EQUAL(ioopm_linked_list_size(new_list), 20);
+
+  is_empty = ioopm_linked_list_is_empty(new_list);
+  CU_ASSERT_FALSE(is_empty);
 
   ioopm_linked_list_destroy(new_list);
 }
@@ -153,8 +154,8 @@ void test_get_link(void)
   ioopm_linked_list_append(new_list, int_elem(5));
   ioopm_linked_list_append(new_list, int_elem(124));
 
-  CU_ASSERT_EQUAL(ioopm_linked_list_get(new_list, 2).int_value, 124)
-
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(new_list, 2).int_value, 124);
+  
   ioopm_linked_list_destroy(new_list);
 }
 
