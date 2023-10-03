@@ -29,8 +29,10 @@ typedef void(*ioopm_apply_function)(elem_t key, elem_t value, void *extra);
 
 
 /// @brief Create a new hash table
-/// @param hash_fun that hashes a the key type to an integer
-/// @param eq_fun checks equality between two arguments of the hashtables key-type
+/// @param hash_fun that hashes a string key type to an integer
+///        Precondition: hash_fun must NOT be NULL                
+/// @param eq_fun checks equality between two arguments of the hashtables string-type
+///        Precondition: eq_fun must be NOT be NULL 
 /// @return A new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predicate eq_fun);
 

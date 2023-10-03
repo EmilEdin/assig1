@@ -265,7 +265,6 @@ void test_hash_table_size(void)
   int the_size = 5;
   for (int i = 1; i <= 5; i++) {
     ioopm_hash_table_insert(ht, int_elem(i), ptr_elem("Hello"));
-    printf("\n%d", i);
   }
   int five_entries = ioopm_hash_table_size(ht);
   // printf("\n%d\n", five_entries);
@@ -354,7 +353,7 @@ void test_remove_int_key(void) {
   ioopm_hash_table_insert(ht, int_elem(-10), ptr_elem("Melon"));
   CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, int_elem(-10)).success);
   ioopm_option_t remove_already_removed = ioopm_hash_table_remove(ht, int_elem(-10));
-  printf("\n%ld\n", ioopm_hash_table_size(ht));
+  CU_ASSERT_TRUE(remove_already_removed.success);
   CU_ASSERT_EQUAL(0, ioopm_hash_table_size(ht));
 
 
