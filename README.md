@@ -1,16 +1,10 @@
 # assig1
 
-Hantera 0 och negative värden som key
-
-Hash_table
-
 felhantering
 
-TEST:
-    coverage med lcov
-    uppdelning till fler test
+hashtalbe size fel
 
-dokumentation
+Varför 505-511 hash_table_tests
 
 gcc -g -o freq_count freq-count.c
 valgrind --leak-check=full ./freq_count 1k-long-words.txt

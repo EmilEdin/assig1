@@ -20,15 +20,13 @@
  */
 
 
-
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option ioopm_option_t;
 
 
-
-
 typedef bool(*ioopm_predicate)(elem_t key, elem_t value, void *arg, bool extra);
 typedef void(*ioopm_apply_function)(elem_t key, elem_t value, void *extra);
+
 
 /// @brief Create a new hash table
 /// @param hash_fun that hashes a the key type to an integer
