@@ -25,6 +25,7 @@ struct hash_table
   entry_t *buckets[No_Buckets];
   hash_function hash_fun;
   ioopm_predicate eq_fun;
+  size_t size;
 };
 
  typedef struct option ioopm_option_t;
@@ -66,6 +67,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(hash_function hash_fun, ioopm_predic
   }
   result->hash_fun = hash_fun;
   result->eq_fun = eq_fun;
+  result->size = 0;
   return result;
 }
 
@@ -106,7 +108,7 @@ static entry_t *find_previous_entry_for_key(entry_t *prev_entry,  elem_t key, ha
 }
 
 
-static void hash_table_insert(entry_t *entry, elem_t key, elem_t value, bool key_is_int) {
+static void hash_table_insert(ioopm_hash_table_t *ht, entry_t *entry, elem_t key, elem_t value, bool key_is_int) {
   entry_t *next = entry->next;
   if (key_is_int == true) {
     if (next != NULL) {                       
@@ -114,9 +116,11 @@ static void hash_table_insert(entry_t *entry, elem_t key, elem_t value, bool key
         next->value = value;
       } else {
         entry->next = entry_create(key, value, next);
+        ht->size = ht->size + 1;
       }
   } else {
     entry->next = entry_create(key, value, next);
+    ht->size = ht->size + 1;
     }
   } else {
     if (next != NULL) {                     
@@ -124,9 +128,11 @@ static void hash_table_insert(entry_t *entry, elem_t key, elem_t value, bool key
         next->value = value;
       } else {
         entry->next = entry_create(key, value, next);
+        ht->size = ht->size + 1;
       }
   } else {
     entry->next = entry_create(key, value, next);
+    ht->size = ht->size + 1;
   }
   }
 }
@@ -145,7 +151,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     int_key = abs(key.int_value);                     //  .int_value reads the integer part of the elem_t
     bucket = int_key % No_Buckets;                    //  find the right bucket
     entry = find_previous_entry_for_key((*ht).buckets[bucket], key, ht->hash_fun);
-    hash_table_insert(entry, key, value, true);
+    hash_table_insert(ht, entry, key, value, true);
   }
   else
   {
@@ -153,7 +159,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     int_key = abs(ht->hash_fun(key)); 
     bucket = int_key % No_Buckets;
     entry = find_previous_entry_for_key((*ht).buckets[bucket], key, ht->hash_fun);
-    hash_table_insert(entry, key, value, false);
+    hash_table_insert(ht, entry, key, value, false);
   }
 }
 
@@ -214,6 +220,7 @@ static ioopm_option_t hash_table_remove(ioopm_hash_table_t *ht, entry_t *entry, 
     if (next != NULL) {
       if (next->key.int_value == key.int_value) {                               // Keys as ints
         ioopm_option_t options = { .success = true, .value = next->value};
+        ht->size = ht->size - 1;
         entry->next = next->next;
         free(next);                                                     
         return options;
@@ -229,6 +236,7 @@ static ioopm_option_t hash_table_remove(ioopm_hash_table_t *ht, entry_t *entry, 
     if (next != NULL) {
       if (ht->hash_fun(next->key) == ht->hash_fun(key)) {            // Keys as strings
       ioopm_option_t options = { .success = true, .value = next->value};
+      ht->size = ht->size - 1;
       entry->next = next->next;
       free(next);
       return options;
@@ -266,7 +274,7 @@ else
     return hash_table_remove(ht, entry, key);
   }
  }
-
+/*
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
   size_t counter = 0;
   for (int i = 0; i < No_Buckets; i++) {
@@ -277,6 +285,11 @@ size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
       }
   }
   return counter;
+}
+*/
+
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) {
+  return ht->size;
 }
 
 bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
@@ -299,6 +312,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
       ht->buckets[i]->next = NULL;
     }
   }
+  ht->size = 0;
 }
 
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
