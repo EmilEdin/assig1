@@ -1,8 +1,7 @@
         -:    0:Source:linked_list.c
-        -:    0:Graph:./hash_table.gcno
-        -:    0:Data:./hash_table.gcda
+        -:    0:Graph:linked_list.gcno
+        -:    0:Data:linked_list.gcda
         -:    0:Runs:1
-        -:    0:Source is newer than graph
         -:    1:#include "linked_list.h"
         -:    2:#include "iterator.h"
         -:    3:#include <assert.h>
@@ -24,265 +23,267 @@
         -:   19:    ioopm_eq_function equal_fun;
         -:   20:};
         -:   21:
-       59:   22:ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function equal_fun)
+       17:   22:ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function equal_fun)
         -:   23:{
-       59:   24:    ioopm_list_t *new_list = calloc(1, sizeof(ioopm_list_t));
-       59:   25:    new_list->first = NULL;
-       59:   26:    new_list->last = NULL;
-       59:   27:    new_list->size = 0;
-       59:   28:    new_list->equal_fun = equal_fun;
-       59:   29:    return new_list;
+       17:   24:    ioopm_list_t *new_list = calloc(1, sizeof(ioopm_list_t));
+       17:   25:    new_list->first = NULL;
+       17:   26:    new_list->last = NULL;
+       17:   27:    new_list->size = 0;
+       17:   28:    new_list->equal_fun = equal_fun;
+       17:   29:    return new_list;
         -:   30:}
         -:   31:
-      163:   32:void links_destroy(ioopm_link_t *link) {
+       74:   32:void links_destroy(ioopm_link_t *link) {
         -:   33:  // Cache the next pointer
-      163:   34:  ioopm_link_t *next = link->next;
-      163:   35:  free(link);
-      163:   36:  if (next != NULL) {
-      112:   37:    links_destroy(next);
+       74:   34:  ioopm_link_t *next = link->next;
+       74:   35:  free(link);
+       74:   36:  if (next != NULL) {
+       59:   37:    links_destroy(next);
         -:   38:  }
-      163:   39:}
+       74:   39:}
         -:   40:
-       59:   41:void ioopm_linked_list_destroy(ioopm_list_t *list) {
-       59:   42:    if (list->first == NULL && list->last == NULL) {
-        8:   43:        free(list);
+       17:   41:void ioopm_linked_list_destroy(ioopm_list_t *list) {
+       17:   42:    if (list->first == NULL && list->last == NULL) {
+        2:   43:        free(list);
         -:   44:    } else {
-       51:   45:        links_destroy(list->first);
-       51:   46:        free(list);
+       15:   45:        links_destroy(list->first);
+       15:   46:        free(list);
         -:   47:    }
-       59:   48:}
+       17:   48:}
         -:   49:
-      163:   50:void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
+       13:   50:void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
         -:   51:{
-      163:   52:    ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
+       13:   52:    ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
         -:   53:    
-      163:   54:    new_link->element = value;
-      163:   55:    new_link->next = NULL;
+       13:   54:    new_link->element = value;
+       13:   55:    new_link->next = NULL;
         -:   56:    // Increment size by one
-      163:   57:    list->size = list->size + 1;
-      163:   58:    if (list->last == NULL && list->first == NULL) {
+       13:   57:    list->size = list->size + 1;
+       13:   58:    if (list->last == NULL && list->first == NULL) {
         -:   59:        // TODO: ska man uppdatera first också till new_link? Svar: Det hjälper att göra så när man använder list_destroy.
-       51:   60:        list->first = new_link;
-       51:   61:        list->last = new_link;
+        4:   60:        list->first = new_link;
+        4:   61:        list->last = new_link;
         -:   62:    } else {
-      112:   63:        list->last->next = new_link;
-      112:   64:        list->last = new_link;
+        9:   63:        list->last->next = new_link;
+        9:   64:        list->last = new_link;
         -:   65:    }
-      163:   66:}
+       13:   66:}
         -:   67:
-    #####:   68:void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value)
+       71:   68:void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value)
         -:   69:{
-    #####:   70:    ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
-    #####:   71:    new_link->element = value;
-    #####:   72:    new_link->next = list->first;
-    #####:   73:    if (list->last == NULL && list->first == NULL) {
-    #####:   74:        list->first = new_link;
-    #####:   75:        list->last = new_link;
+       71:   70:    ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
+       71:   71:    new_link->element = value;
+       71:   72:    new_link->next = list->first;
+       71:   73:    if (list->last == NULL && list->first == NULL) {
+       12:   74:        list->first = new_link;
+       12:   75:        list->last = new_link;
         -:   76:    }
-    #####:   77:    list->first = new_link;
+       71:   77:    list->first = new_link;
         -:   78:    // Increment size by one
-    #####:   79:    list->size = list->size + 1;
-    #####:   80:}
+       71:   79:    list->size = list->size + 1;
+       71:   80:}
         -:   81:
-    #####:   82:size_t ioopm_linked_list_size(ioopm_list_t *list) {
-    #####:   83:    return list->size;
+       18:   82:size_t ioopm_linked_list_size(ioopm_list_t *list) {
+       18:   83:    return list->size;
         -:   84:}
         -:   85:
-    #####:   86:void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value) {
-    #####:   87:    size_t length = ioopm_linked_list_size(list);
-    #####:   88:    int counter = 1;
+        4:   86:void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value) {
+        4:   87:    size_t length = ioopm_linked_list_size(list);
+        4:   88:    int counter = 1;
         -:   89:    // If we insert at the head of the list
-    #####:   90:    if (index == 0) {
-    #####:   91:        ioopm_linked_list_prepend(list, value);
+        4:   90:    if (index == 0) {
+        1:   91:        ioopm_linked_list_prepend(list, value);
         -:   92:    // If we insert at the last element
-    #####:   93:    } else if (length == index) {
-    #####:   94:        ioopm_linked_list_append(list, value);
+        3:   93:    } else if (length == index) {
+        1:   94:        ioopm_linked_list_append(list, value);
         -:   95:    } else {
-    #####:   96:        ioopm_link_t *linked_link = list->first;
-    #####:   97:        while (counter != index - 1 && index != 1) {
-    #####:   98:            linked_link = linked_link->next;
-    #####:   99:            counter = counter + 1;
+        2:   96:        ioopm_link_t *linked_link = list->first;
+        4:   97:        while (counter != index - 1 && index != 1) {
+        2:   98:            linked_link = linked_link->next;
+        2:   99:            counter = counter + 1;
         -:  100:        }
-    #####:  101:        ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
-    #####:  102:        new_link->element = value;
-    #####:  103:        new_link->next = linked_link->next;
-    #####:  104:        linked_link->next = new_link;
+        2:  101:        ioopm_link_t *new_link = calloc(1, sizeof(ioopm_link_t));
+        2:  102:        new_link->element = value;
+        2:  103:        new_link->next = linked_link->next;
+        2:  104:        linked_link->next = new_link;
         -:  105:       // Increment size by one
-    #####:  106:       list->size = list->size + 1;
+        2:  106:       list->size = list->size + 1;
         -:  107:    }
-    #####:  108:}
+        4:  108:}
         -:  109:
-    #####:  110:elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
+        1:  110:elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
         -:  111:{
-    #####:  112:    int counter = index;
-    #####:  113:    ioopm_link_t *list_itr = list->first;
-    #####:  114:    while (counter != 0) {
-    #####:  115:        list_itr = list_itr->next;
-    #####:  116:        counter--;
-        -:  117:    }
-    #####:  118:    return list_itr->element;
-        -:  119:} 
-    #####:  120:bool ioopm_linked_list_is_empty(ioopm_list_t *list) {
-    #####:  121:    return list->size == 0;
-        -:  122:}
-        -:  123:
-    #####:  124:bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element) {
-    #####:  125:    ioopm_link_t *linked_list = list->first;
-    #####:  126:    for (int i = 0; i < list->size; i++) {
-    #####:  127:        if (list->equal_fun(linked_list->element, element)) {
-    #####:  128:            return true;
-        -:  129:        } else {
-    #####:  130:            linked_list = linked_list->next;
-        -:  131:        }
-        -:  132:    }
-    #####:  133:    return false;
-        -:  134:}
-        -:  135:
-    #####:  136:elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index) {
-    #####:  137:    int counter = 1;
-    #####:  138:    if (index == 0 && list->first->next != NULL) { // (When we want to remove the first element in the list)
-        -:  139:        // We move the pointer of the first element to the next element in the list 
-        -:  140:        // And free the removed elements memory and return it's value
-    #####:  141:        ioopm_link_t *free_the_struct1 = list->first;
-    #####:  142:        list->first = list->first->next;
-    #####:  143:        elem_t removed_first_element = free_the_struct1->element;
-    #####:  144:        free(free_the_struct1);
-    #####:  145:        list->size = list->size - 1;
-    #####:  146:        return removed_first_element;
-        -:  147:
-    #####:  148:    } else if (list->size - 1 == index) { // (When we want to remove the last element in the list)
-        -:  149:        // We move the pointer of the last element to the previous element in the list by iterating to the penultimate element
-        -:  150:        // And free the removed elements memory and return it's value
-    #####:  151:       if (list->first->next == NULL) {
-    #####:  152:        elem_t removed_final_element = list->first->element;
-    #####:  153:        ioopm_link_t *free_the_struct1 = list->first;
-    #####:  154:        list->first = NULL;
-    #####:  155:        list->last = NULL;
-    #####:  156:        free(free_the_struct1);
-        -:  157:        
-    #####:  158:        return removed_final_element;    
-        -:  159:       }
-        -:  160:
-    #####:  161:        ioopm_link_t *free_the_struct = list->last;
-    #####:  162:        ioopm_link_t *next_link = list->first;
-    #####:  163:        list->size = list->size - 1;
-        -:  164:
-    #####:  165:        while (counter != list->size) {
-    #####:  166:            next_link = next_link->next;
-    #####:  167:            counter = counter + 1;
-        -:  168:        }
-    #####:  169:        list->last = next_link;
-    #####:  170:        next_link->next = NULL;
-    #####:  171:        elem_t removed_last_element = free_the_struct->element;
-    #####:  172:        free(free_the_struct);
-    #####:  173:        return removed_last_element;
-        -:  174:
-        -:  175:    } else { 
-        -:  176:        // We find the previous element and point it's next pointer to the element after the intented removed element
-        -:  177:        // And free the removed elements memory and return it's value
-    #####:  178:        ioopm_link_t *linked_list = list->first;
-    #####:  179:        counter = counter - 1;
-    #####:  180:        while (counter != index - 1) {
-    #####:  181:            linked_list = linked_list->next;
-    #####:  182:            counter = counter + 1;
-        -:  183:        }
-    #####:  184:        ioopm_link_t *free_the_struct2 = linked_list->next;
-    #####:  185:        linked_list->next = linked_list->next->next;
-        -:  186:        
-    #####:  187:        list->size = list->size - 1;
-    #####:  188:        elem_t removed_element = free_the_struct2->element;
-    #####:  189:        free(free_the_struct2);
-    #####:  190:        return removed_element;
-        -:  191:    }
-        -:  192:}
-        -:  193:
-    #####:  194:void ioopm_linked_list_clear(ioopm_list_t *list) {
-    #####:  195:    size_t size = list->size;
-    #####:  196:    for (int i = 0; i < size; i++) {
-    #####:  197:        ioopm_linked_list_remove(list, 0);
-        -:  198:    }
-    #####:  199:}
-        -:  200:
-        -:  201:
-    #####:  202:bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
-        -:  203:{
-    #####:  204:    size_t size = ioopm_linked_list_size(list);
-    #####:  205:    ioopm_link_t *list_itr = list->first;
-        -:  206:
-    #####:  207:    for (int i = 0; i < size; i++) {
-    #####:  208:        if (!prop(list_itr->element, extra)) {
-    #####:  209:            return false;   
-        -:  210:        } else {
-    #####:  211:            list_itr = list_itr->next;
-        -:  212:        }
-        -:  213:    } 
-    #####:  214:    return true;
-        -:  215:}
-        -:  216:
-    #####:  217:bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
-        -:  218:{
-    #####:  219:    size_t size = ioopm_linked_list_size(list);
-    #####:  220:    ioopm_link_t *list_itr = list->first;
-        -:  221:
-    #####:  222:    for (int i = 0; i < size; i++) {
-    #####:  223:        if (prop(list_itr->element, extra)) {
-    #####:  224:            return true;   
-        -:  225:        } else {
-    #####:  226:            list_itr = list_itr->next;
-        -:  227:        }
-        -:  228:    } 
-    #####:  229:    return false;
-        -:  230:}
-        -:  231:
-    #####:  232:void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) 
-        -:  233:{
-    #####:  234:    size_t size = ioopm_linked_list_size(list); 
-    #####:  235:    ioopm_link_t *list_itr = list->first;
-    #####:  236:    int counter = 0;
-        -:  237:
-        -:  238:    
-    #####:  239:    while (counter != size) {
-    #####:  240:        elem_t *a = &(list_itr->element);
-    #####:  241:        fun(a, extra);
-    #####:  242:        counter++;
-    #####:  243:        list_itr = list_itr->next;
-        -:  244:    }
-    #####:  245:}
-        -:  246:
-        -:  247:
+       1*:  112:    assert(list->size > index);
+        1:  113:    int counter = index;
+        1:  114:    ioopm_link_t *list_itr = list->first;
+        3:  115:    while (counter != 0) {
+        2:  116:        list_itr = list_itr->next;
+        2:  117:        counter--;
+        -:  118:    }
+        1:  119:    return list_itr->element;
+        -:  120:} 
+        2:  121:bool ioopm_linked_list_is_empty(ioopm_list_t *list) {
+        2:  122:    return list->size == 0;
+        -:  123:}
+        -:  124:
+        4:  125:bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element) {
+        4:  126:    ioopm_link_t *linked_list = list->first;
+       10:  127:    for (int i = 0; i < list->size; i++) {
+        7:  128:        if (list->equal_fun(linked_list->element, element)) {
+        1:  129:            return true;
+        -:  130:        } else {
+        6:  131:            linked_list = linked_list->next;
+        -:  132:        }
+        -:  133:    }
+        3:  134:    return false;
+        -:  135:}
+        -:  136:
+       12:  137:elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index) {
+      12*:  138:    assert(list->size > index);
+       12:  139:    int counter = 1;
+       12:  140:    if (index == 0 && list->first->next != NULL) { // (When we want to remove the first element in the list)
+        -:  141:        // We move the pointer of the first element to the next element in the list 
+        -:  142:        // And free the removed elements memory and return it's value
+        8:  143:        ioopm_link_t *free_the_struct1 = list->first;
+        8:  144:        list->first = list->first->next;
+        8:  145:        elem_t removed_first_element = free_the_struct1->element;
+        8:  146:        free(free_the_struct1);
+        8:  147:        list->size = list->size - 1;
+        8:  148:        return removed_first_element;
+        -:  149:
+        4:  150:    } else if (list->size - 1 == index) { // (When we want to remove the last element in the list)
+        -:  151:        // We move the pointer of the last element to the previous element in the list by iterating to the penultimate element
+        -:  152:        // And free the removed elements memory and return it's value
+        2:  153:       if (list->first->next == NULL) {
+        1:  154:        elem_t removed_final_element = list->first->element;
+        1:  155:        ioopm_link_t *free_the_struct1 = list->first;
+        1:  156:        list->first = NULL;
+        1:  157:        list->last = NULL;
+        1:  158:        free(free_the_struct1);
+        -:  159:        
+        1:  160:        return removed_final_element;    
+        -:  161:       }
+        -:  162:
+        1:  163:        ioopm_link_t *free_the_struct = list->last;
+        1:  164:        ioopm_link_t *next_link = list->first;
+        1:  165:        list->size = list->size - 1;
+        -:  166:
+        4:  167:        while (counter != list->size) {
+        3:  168:            next_link = next_link->next;
+        3:  169:            counter = counter + 1;
+        -:  170:        }
+        1:  171:        list->last = next_link;
+        1:  172:        next_link->next = NULL;
+        1:  173:        elem_t removed_last_element = free_the_struct->element;
+        1:  174:        free(free_the_struct);
+        1:  175:        return removed_last_element;
+        -:  176:
+        -:  177:    } else { 
+        -:  178:        // We find the previous element and point it's next pointer to the element after the intented removed element
+        -:  179:        // And free the removed elements memory and return it's value
+        2:  180:        ioopm_link_t *linked_list = list->first;
+        2:  181:        counter = counter - 1;
+        3:  182:        while (counter != index - 1) {
+        1:  183:            linked_list = linked_list->next;
+        1:  184:            counter = counter + 1;
+        -:  185:        }
+        2:  186:        ioopm_link_t *free_the_struct2 = linked_list->next;
+        2:  187:        linked_list->next = linked_list->next->next;
+        -:  188:        
+        2:  189:        list->size = list->size - 1;
+        2:  190:        elem_t removed_element = free_the_struct2->element;
+        2:  191:        free(free_the_struct2);
+        2:  192:        return removed_element;
+        -:  193:    }
+        -:  194:}
+        -:  195:
+        1:  196:void ioopm_linked_list_clear(ioopm_list_t *list) {
+        1:  197:    size_t size = list->size;
+        8:  198:    for (int i = 0; i < size; i++) {
+        7:  199:        ioopm_linked_list_remove(list, 0);
+        -:  200:    }
+        1:  201:}
+        -:  202:
+        -:  203:
+        6:  204:bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
+        -:  205:{
+        6:  206:    size_t size = ioopm_linked_list_size(list);
+        6:  207:    ioopm_link_t *list_itr = list->first;
+        -:  208:
+       17:  209:    for (int i = 0; i < size; i++) {
+       12:  210:        if (!prop(list_itr->element, extra)) {
+        1:  211:            return false;   
+        -:  212:        } else {
+       11:  213:            list_itr = list_itr->next;
+        -:  214:        }
+        -:  215:    } 
+        5:  216:    return true;
+        -:  217:}
+        -:  218:
+        3:  219:bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
+        -:  220:{
+        3:  221:    size_t size = ioopm_linked_list_size(list);
+        3:  222:    ioopm_link_t *list_itr = list->first;
+        -:  223:
+        6:  224:    for (int i = 0; i < size; i++) {
+        4:  225:        if (prop(list_itr->element, extra)) {
+        1:  226:            return true;   
+        -:  227:        } else {
+        3:  228:            list_itr = list_itr->next;
+        -:  229:        }
+        -:  230:    } 
+        2:  231:    return false;
+        -:  232:}
+        -:  233:
+        3:  234:void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) 
+        -:  235:{
+        3:  236:    size_t size = ioopm_linked_list_size(list); 
+        3:  237:    ioopm_link_t *list_itr = list->first;
+        3:  238:    int counter = 0;
+        -:  239:
+        -:  240:    
+       11:  241:    while (counter != size) {
+        8:  242:        elem_t *a = &(list_itr->element);
+        8:  243:        fun(a, extra);
+        8:  244:        counter++;
+        8:  245:        list_itr = list_itr->next;
+        -:  246:    }
+        3:  247:}
         -:  248:
-        -:  249:struct iter 
-        -:  250:{
-        -:  251:  ioopm_link_t *current;
-        -:  252:  ioopm_list_t *list; /// New field
-        -:  253:};
-        -:  254:
-    #####:  255:ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
-        -:  256:{
-    #####:  257:  ioopm_list_iterator_t *result = calloc(1, sizeof(struct iter));
-        -:  258:
-    #####:  259:  result->current = list->first;
-    #####:  260:  result->list = list; /// Iterator remembers where it came from
-        -:  261:
-    #####:  262:  return result; 
-        -:  263:}
-        -:  264:
-    #####:  265:void ioopm_iterator_next(ioopm_list_iterator_t *iter)
-        -:  266:{
-    #####:  267:  iter->current = iter->current->next;
-    #####:  268:}
-        -:  269:
-    #####:  270:elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
-        -:  271:{
-    #####:  272:  return iter->current->element; 
-        -:  273:}
-        -:  274:
-    #####:  275:void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
-        -:  276:{
-    #####:  277:  free(iter);
-    #####:  278:}
-        -:  279:
-    #####:  280:void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
-        -:  281:{
-    #####:  282:  iter->current = iter->list->first;
-    #####:  283:}
+        -:  249:
+        -:  250:
+        -:  251:struct iter 
+        -:  252:{
+        -:  253:  ioopm_link_t *current;
+        -:  254:  ioopm_list_t *list; /// New field
+        -:  255:};
+        -:  256:
+        4:  257:ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
+        -:  258:{
+        4:  259:  ioopm_list_iterator_t *result = calloc(1, sizeof(struct iter));
+        -:  260:
+        4:  261:  result->current = list->first;
+        4:  262:  result->list = list; /// Iterator remembers where it came from
+        -:  263:
+        4:  264:  return result; 
+        -:  265:}
+        -:  266:
+        6:  267:void ioopm_iterator_next(ioopm_list_iterator_t *iter)
+        -:  268:{
+        6:  269:  iter->current = iter->current->next;
+        6:  270:}
+        -:  271:
+        1:  272:elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
+        -:  273:{
+        1:  274:  return iter->current->element; 
+        -:  275:}
+        -:  276:
+        4:  277:void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
+        -:  278:{
+        4:  279:  free(iter);
+        4:  280:}
+        -:  281:
+        1:  282:void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
+        -:  283:{
+        1:  284:  iter->current = iter->list->first;
+        1:  285:}
