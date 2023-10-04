@@ -85,7 +85,7 @@ static entry_t *find_previous_entry_for_key(entry_t *prev_entry,  elem_t key, ha
     entry_t *current_entry = prev_entry->next;
     if (current_entry == NULL) {                                       //  We can't go any futher down the list
       return prev_entry;
-    } else if (abs(current_entry->key.int_value) >= abs(key.int_value)) {             //  We found the right place to insert a new entry
+    } else if (abs(current_entry->key.int_value) >= abs(key.int_value)) {      //  We found the right place to insert a new entry
       return prev_entry;
     } else {
       return find_previous_entry_for_key(current_entry, key, hash);    //  Search recursively until satisfied
@@ -113,7 +113,6 @@ static void hash_table_insert(entry_t *entry, elem_t key, elem_t value, bool key
       if (abs(next->key.int_value) == key.int_value) { // Check if next has our key, if not create and entry
         next->value = value;
       } else {
-  
         entry->next = entry_create(key, value, next);
       }
   } else {
@@ -151,7 +150,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   else
   {
     //  Treat keys as string
-    int_key = ht->hash_fun(key); 
+    int_key = abs(ht->hash_fun(key)); 
     bucket = int_key % No_Buckets;
     entry = find_previous_entry_for_key((*ht).buckets[bucket], key, ht->hash_fun);
     hash_table_insert(entry, key, value, false);

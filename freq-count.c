@@ -8,7 +8,7 @@
 #include "hash_table.c"
 
 #define Delimiters "+-#@()[]{}.,:;!? \t\n\r"
-
+int count = 0;
 int string_sum_hash(elem_t e)
 {
   char *str = e.string_value;
