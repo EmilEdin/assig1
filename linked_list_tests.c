@@ -99,6 +99,8 @@ void test_insert_link(void) {
   ioopm_linked_list_prepend(new_list, int_elem(2));
   ioopm_linked_list_prepend(new_list, int_elem(5));
   ioopm_linked_list_prepend(new_list, int_elem(124));
+  ioopm_linked_list_prepend(new_list, int_elem(19824));
+  ioopm_linked_list_prepend(new_list, int_elem(1274));
 
   // Checks that inserting before first works
   ioopm_linked_list_insert(new_list, 0, int_elem(69));
@@ -111,6 +113,8 @@ void test_insert_link(void) {
   // Checks that inserting on a key that already exists, updates elements value
   ioopm_linked_list_insert(new_list, 2, int_elem(1337));
   CU_ASSERT_EQUAL(new_list->first->next->element.int_value, 1337);
+  ioopm_linked_list_insert(new_list, 4, int_elem(420));
+  CU_ASSERT_EQUAL(new_list->first->next->next->next->element.int_value, 420);
   
   ioopm_linked_list_destroy(new_list);
 }

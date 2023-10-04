@@ -1,5 +1,19 @@
 # assig1
 
+# How to run the program
+gcc -g -o freq_count freq-count.c
+valgrind --leak-check=full ./freq_count 1k-long-words.txt
+gcc -g  hash_Table.c hash_table_tests.c -o hash_table -lcunit
+
+/* Line and branch coverage using gcov */
+* linked_list.c 100% 
+* hash_table.c 99.51% // int_compare function not read
+
+# Brief program documentation
+* The hash table is implemented with a dummy entry.
+* The linked list is NOT implemented with a sentinel link.
+* When we create a hash table the function ioopm_hash_table_create takes in to arguments, if the first argument (hash_fun) is NULL then we treat keys as ints, otherwise strings. If the second argument (eq_fun) is NULL, then values are ints, otherwise strings. 
+* If a function has an index argument, we use assert in our function to make sure we do not remove or acess memory out of bounds. When it comes to types that we mentioned previously, it's a precondition that is also specified in the repsective .h file. 
 
 # Initial Profiling Results
 /* Small.txt */
