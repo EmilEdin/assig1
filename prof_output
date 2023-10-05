@@ -1,32 +1,31 @@
 Flat profile:
 
 Each sample counts as 0.01 seconds.
+ no time accumulated
+
   %   cumulative   self              self     total           
- time   seconds   seconds    calls  ms/call  ms/call  name    
- 25.03      0.01     0.01  1018569     0.00     0.00  key_equiv
- 25.03      0.02     0.01    19999     0.00     0.00  links_destroy
- 25.03      0.03     0.01    10001     0.00     0.00  ioopm_hash_table_keys
- 12.52      0.04     0.01  3893767     0.00     0.00  ioopm_linked_list_append
- 12.52      0.04     0.01                             ioopm_linked_list_prepend
-  0.00      0.04     0.00   216902     0.00     0.00  string_sum_hash
-  0.00      0.04     0.00    20001     0.00     0.00  ioopm_linked_list_create
-  0.00      0.04     0.00    20001     0.00     0.00  ioopm_linked_list_destroy
-  0.00      0.04     0.00    20000     0.00     0.00  find_previous_entry_for_key
-  0.00      0.04     0.00    10001     0.00     0.00  ioopm_hash_table_size
-  0.00      0.04     0.00    10000     0.00     0.00  hash_table_insert
-  0.00      0.04     0.00    10000     0.00     0.00  hash_table_lookup
-  0.00      0.04     0.00    10000     0.00     0.00  ioopm_hash_table_has_key
-  0.00      0.04     0.00    10000     0.00     0.00  ioopm_hash_table_insert
-  0.00      0.04     0.00    10000     0.00     0.00  ioopm_hash_table_lookup
-  0.00      0.04     0.00    10000     0.00     0.00  ioopm_hash_table_values
-  0.00      0.04     0.00    10000     0.00     0.00  process_word
-  0.00      0.04     0.00      216     0.00     0.00  entry_create
-  0.00      0.04     0.00       17     0.00     0.00  entry_destroy
-  0.00      0.04     0.00        1     0.00     0.00  ioopm_hash_table_create
-  0.00      0.04     0.00        1     0.00     0.00  ioopm_hash_table_destroy
-  0.00      0.04     0.00        1     0.00     0.00  ioopm_linked_list_size
-  0.00      0.04     0.00        1     0.00    35.05  process_file
-  0.00      0.04     0.00        1     0.00     0.00  sort_keys
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00    10209     0.00     0.00  string_sum_hash
+  0.00      0.00     0.00     3717     0.00     0.00  find_previous_entry_for_key
+  0.00      0.00     0.00     2478     0.00     0.00  hash_table_lookup
+  0.00      0.00     0.00     2478     0.00     0.00  ioopm_hash_table_lookup
+  0.00      0.00     0.00     1239     0.00     0.00  hash_table_insert
+  0.00      0.00     0.00     1239     0.00     0.00  ioopm_hash_table_has_key
+  0.00      0.00     0.00     1239     0.00     0.00  ioopm_hash_table_insert
+  0.00      0.00     0.00     1239     0.00     0.00  process_word
+  0.00      0.00     0.00       54     0.00     0.00  entry_create
+  0.00      0.00     0.00       37     0.00     0.00  ioopm_linked_list_append
+  0.00      0.00     0.00       17     0.00     0.00  entry_destroy
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_hash_table_create
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_hash_table_destroy
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_hash_table_keys
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_hash_table_size
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_linked_list_create
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_linked_list_destroy
+  0.00      0.00     0.00        1     0.00     0.00  ioopm_linked_list_size
+  0.00      0.00     0.00        1     0.00     0.00  links_destroy
+  0.00      0.00     0.00        1     0.00     0.00  process_file
+  0.00      0.00     0.00        1     0.00     0.00  sort_keys
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -55,7 +54,7 @@ name       the name of the function.  This is the minor sort
 	   in parenthesis it shows where it would appear in
 	   the gprof listing if it were to be printed.
 
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
+Copyright (C) 2012-2022 Free Software Foundation, Inc.
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
@@ -64,132 +63,101 @@ notice and this notice are preserved.
 		     Call graph (explanation follows)
 
 
-granularity: each sample hit covers 2 byte(s) for 24.97% of 0.04 seconds
+granularity: each sample hit covers 4 byte(s) no time propagated
 
 index % time    self  children    called     name
-                                                 <spontaneous>
-[1]     87.5    0.00    0.04                 main [1]
-                0.00    0.04       1/1           process_file [4]
-                0.00    0.00       1/10001       ioopm_hash_table_keys [5]
-                0.00    0.00       1/20001       ioopm_linked_list_destroy [7]
-                0.00    0.00     199/10000       ioopm_hash_table_lookup [19]
-                0.00    0.00       1/1           ioopm_hash_table_create [22]
-                0.00    0.00       1/1           ioopm_linked_list_size [24]
-                0.00    0.00       1/10001       ioopm_hash_table_size [15]
-                0.00    0.00       1/1           sort_keys [25]
-                0.00    0.00       1/1           ioopm_hash_table_destroy [23]
+                0.00    0.00    1239/10209       ioopm_hash_table_insert [7]
+                0.00    0.00    2478/10209       ioopm_hash_table_lookup [4]
+                0.00    0.00    6492/10209       find_previous_entry_for_key [2]
+[1]      0.0    0.00    0.00   10209         string_sum_hash [1]
 -----------------------------------------------
-                0.00    0.04   10000/10000       process_word [3]
-[2]     87.5    0.00    0.04   10000         ioopm_hash_table_has_key [2]
-                0.01    0.00   10000/10001       ioopm_hash_table_keys [5]
-                0.01    0.00 1018569/1018569     key_equiv [6]
-                0.00    0.01   20000/20001       ioopm_linked_list_destroy [7]
-                0.00    0.00   10000/10000       ioopm_hash_table_values [11]
-                0.00    0.00   10000/10001       ioopm_hash_table_size [15]
+                                3216             find_previous_entry_for_key [2]
+                0.00    0.00    1239/3717        ioopm_hash_table_insert [7]
+                0.00    0.00    2478/3717        ioopm_hash_table_lookup [4]
+[2]      0.0    0.00    0.00    3717+3216    find_previous_entry_for_key [2]
+                0.00    0.00    6492/10209       string_sum_hash [1]
+                                3216             find_previous_entry_for_key [2]
 -----------------------------------------------
-                0.00    0.04   10000/10000       process_file [4]
-[3]     87.5    0.00    0.04   10000         process_word [3]
-                0.00    0.04   10000/10000       ioopm_hash_table_has_key [2]
-                0.00    0.00   10000/10000       ioopm_hash_table_insert [18]
-                0.00    0.00    9801/10000       ioopm_hash_table_lookup [19]
+                0.00    0.00    2478/2478        ioopm_hash_table_lookup [4]
+[3]      0.0    0.00    0.00    2478         hash_table_lookup [3]
 -----------------------------------------------
-                0.00    0.04       1/1           main [1]
-[4]     87.5    0.00    0.04       1         process_file [4]
-                0.00    0.04   10000/10000       process_word [3]
+                0.00    0.00      37/2478        main [54]
+                0.00    0.00    1202/2478        process_word [8]
+                0.00    0.00    1239/2478        ioopm_hash_table_has_key [6]
+[4]      0.0    0.00    0.00    2478         ioopm_hash_table_lookup [4]
+                0.00    0.00    2478/10209       string_sum_hash [1]
+                0.00    0.00    2478/3717        find_previous_entry_for_key [2]
+                0.00    0.00    2478/2478        hash_table_lookup [3]
 -----------------------------------------------
-                0.00    0.00       1/10001       main [1]
-                0.01    0.00   10000/10001       ioopm_hash_table_has_key [2]
-[5]     31.3    0.01    0.00   10001         ioopm_hash_table_keys [5]
-                0.00    0.00 1946983/3893767     ioopm_linked_list_append [9]
-                0.00    0.00   10001/20001       ioopm_linked_list_create [13]
+                0.00    0.00    1239/1239        ioopm_hash_table_insert [7]
+[5]      0.0    0.00    0.00    1239         hash_table_insert [5]
+                0.00    0.00      37/54          entry_create [9]
 -----------------------------------------------
-                0.01    0.00 1018569/1018569     ioopm_hash_table_has_key [2]
-[6]     25.0    0.01    0.00 1018569         key_equiv [6]
+                0.00    0.00    1239/1239        process_word [8]
+[6]      0.0    0.00    0.00    1239         ioopm_hash_table_has_key [6]
+                0.00    0.00    1239/2478        ioopm_hash_table_lookup [4]
 -----------------------------------------------
-                0.00    0.00       1/20001       main [1]
-                0.00    0.01   20000/20001       ioopm_hash_table_has_key [2]
-[7]     25.0    0.00    0.01   20001         ioopm_linked_list_destroy [7]
-                0.01    0.00   19999/19999       links_destroy [8]
+                0.00    0.00    1239/1239        process_word [8]
+[7]      0.0    0.00    0.00    1239         ioopm_hash_table_insert [7]
+                0.00    0.00    1239/10209       string_sum_hash [1]
+                0.00    0.00    1239/3717        find_previous_entry_for_key [2]
+                0.00    0.00    1239/1239        hash_table_insert [5]
 -----------------------------------------------
-                             3873768             links_destroy [8]
-                0.01    0.00   19999/19999       ioopm_linked_list_destroy [7]
-[8]     25.0    0.01    0.00   19999+3873768 links_destroy [8]
-                             3873768             links_destroy [8]
+                0.00    0.00    1239/1239        process_file [20]
+[8]      0.0    0.00    0.00    1239         process_word [8]
+                0.00    0.00    1239/1239        ioopm_hash_table_has_key [6]
+                0.00    0.00    1239/1239        ioopm_hash_table_insert [7]
+                0.00    0.00    1202/2478        ioopm_hash_table_lookup [4]
 -----------------------------------------------
-                0.00    0.00 1946784/3893767     ioopm_hash_table_values [11]
-                0.00    0.00 1946983/3893767     ioopm_hash_table_keys [5]
-[9]     12.5    0.01    0.00 3893767         ioopm_linked_list_append [9]
+                0.00    0.00      17/54          ioopm_hash_table_create [12]
+                0.00    0.00      37/54          hash_table_insert [5]
+[9]      0.0    0.00    0.00      54         entry_create [9]
 -----------------------------------------------
-                                                 <spontaneous>
-[10]    12.5    0.01    0.00                 ioopm_linked_list_prepend [10]
+                0.00    0.00      37/37          ioopm_hash_table_keys [14]
+[10]     0.0    0.00    0.00      37         ioopm_linked_list_append [10]
 -----------------------------------------------
-                0.00    0.00   10000/10000       ioopm_hash_table_has_key [2]
-[11]     6.2    0.00    0.00   10000         ioopm_hash_table_values [11]
-                0.00    0.00 1946784/3893767     ioopm_linked_list_append [9]
-                0.00    0.00   10000/20001       ioopm_linked_list_create [13]
+                                  37             entry_destroy [11]
+                0.00    0.00      17/17          ioopm_hash_table_destroy [13]
+[11]     0.0    0.00    0.00      17+37      entry_destroy [11]
+                                  37             entry_destroy [11]
 -----------------------------------------------
-                0.00    0.00   10000/216902      ioopm_hash_table_insert [18]
-                0.00    0.00   10000/216902      ioopm_hash_table_lookup [19]
-                0.00    0.00  196902/216902      find_previous_entry_for_key [14]
-[12]     0.0    0.00    0.00  216902         string_sum_hash [12]
+                0.00    0.00       1/1           main [54]
+[12]     0.0    0.00    0.00       1         ioopm_hash_table_create [12]
+                0.00    0.00      17/54          entry_create [9]
 -----------------------------------------------
-                0.00    0.00   10000/20001       ioopm_hash_table_values [11]
-                0.00    0.00   10001/20001       ioopm_hash_table_keys [5]
-[13]     0.0    0.00    0.00   20001         ioopm_linked_list_create [13]
+                0.00    0.00       1/1           main [54]
+[13]     0.0    0.00    0.00       1         ioopm_hash_table_destroy [13]
+                0.00    0.00      17/17          entry_destroy [11]
 -----------------------------------------------
-                               98305             find_previous_entry_for_key [14]
-                0.00    0.00   10000/20000       ioopm_hash_table_insert [18]
-                0.00    0.00   10000/20000       ioopm_hash_table_lookup [19]
-[14]     0.0    0.00    0.00   20000+98305   find_previous_entry_for_key [14]
-                0.00    0.00  196902/216902      string_sum_hash [12]
-                               98305             find_previous_entry_for_key [14]
+                0.00    0.00       1/1           main [54]
+[14]     0.0    0.00    0.00       1         ioopm_hash_table_keys [14]
+                0.00    0.00      37/37          ioopm_linked_list_append [10]
+                0.00    0.00       1/1           ioopm_linked_list_create [16]
 -----------------------------------------------
-                0.00    0.00       1/10001       main [1]
-                0.00    0.00   10000/10001       ioopm_hash_table_has_key [2]
-[15]     0.0    0.00    0.00   10001         ioopm_hash_table_size [15]
+                0.00    0.00       1/1           main [54]
+[15]     0.0    0.00    0.00       1         ioopm_hash_table_size [15]
 -----------------------------------------------
-                0.00    0.00   10000/10000       ioopm_hash_table_insert [18]
-[16]     0.0    0.00    0.00   10000         hash_table_insert [16]
-                0.00    0.00     199/216         entry_create [20]
+                0.00    0.00       1/1           ioopm_hash_table_keys [14]
+[16]     0.0    0.00    0.00       1         ioopm_linked_list_create [16]
 -----------------------------------------------
-                0.00    0.00   10000/10000       ioopm_hash_table_lookup [19]
-[17]     0.0    0.00    0.00   10000         hash_table_lookup [17]
+                0.00    0.00       1/1           main [54]
+[17]     0.0    0.00    0.00       1         ioopm_linked_list_destroy [17]
+                0.00    0.00       1/1           links_destroy [19]
 -----------------------------------------------
-                0.00    0.00   10000/10000       process_word [3]
-[18]     0.0    0.00    0.00   10000         ioopm_hash_table_insert [18]
-                0.00    0.00   10000/216902      string_sum_hash [12]
-                0.00    0.00   10000/20000       find_previous_entry_for_key [14]
-                0.00    0.00   10000/10000       hash_table_insert [16]
+                0.00    0.00       1/1           main [54]
+[18]     0.0    0.00    0.00       1         ioopm_linked_list_size [18]
 -----------------------------------------------
-                0.00    0.00     199/10000       main [1]
-                0.00    0.00    9801/10000       process_word [3]
-[19]     0.0    0.00    0.00   10000         ioopm_hash_table_lookup [19]
-                0.00    0.00   10000/216902      string_sum_hash [12]
-                0.00    0.00   10000/20000       find_previous_entry_for_key [14]
-                0.00    0.00   10000/10000       hash_table_lookup [17]
+                                  36             links_destroy [19]
+                0.00    0.00       1/1           ioopm_linked_list_destroy [17]
+[19]     0.0    0.00    0.00       1+36      links_destroy [19]
+                                  36             links_destroy [19]
 -----------------------------------------------
-                0.00    0.00      17/216         ioopm_hash_table_create [22]
-                0.00    0.00     199/216         hash_table_insert [16]
-[20]     0.0    0.00    0.00     216         entry_create [20]
+                0.00    0.00       1/1           main [54]
+[20]     0.0    0.00    0.00       1         process_file [20]
+                0.00    0.00    1239/1239        process_word [8]
 -----------------------------------------------
-                                 199             entry_destroy [21]
-                0.00    0.00      17/17          ioopm_hash_table_destroy [23]
-[21]     0.0    0.00    0.00      17+199     entry_destroy [21]
-                                 199             entry_destroy [21]
------------------------------------------------
-                0.00    0.00       1/1           main [1]
-[22]     0.0    0.00    0.00       1         ioopm_hash_table_create [22]
-                0.00    0.00      17/216         entry_create [20]
------------------------------------------------
-                0.00    0.00       1/1           main [1]
-[23]     0.0    0.00    0.00       1         ioopm_hash_table_destroy [23]
-                0.00    0.00      17/17          entry_destroy [21]
------------------------------------------------
-                0.00    0.00       1/1           main [1]
-[24]     0.0    0.00    0.00       1         ioopm_linked_list_size [24]
------------------------------------------------
-                0.00    0.00       1/1           main [1]
-[25]     0.0    0.00    0.00       1         sort_keys [25]
+                0.00    0.00       1/1           main [54]
+[21]     0.0    0.00    0.00       1         sort_keys [21]
 -----------------------------------------------
 
  This table describes the call tree of the program, and was sorted by
@@ -274,7 +242,7 @@ index % time    self  children    called     name
  for that member, how many times it was called from other members of
  the cycle.
 
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
+Copyright (C) 2012-2022 Free Software Foundation, Inc.
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
@@ -282,11 +250,10 @@ notice and this notice are preserved.
 
 Index by function name
 
-  [20] entry_create           [18] ioopm_hash_table_insert [10] ioopm_linked_list_prepend
-  [21] entry_destroy           [5] ioopm_hash_table_keys  [24] ioopm_linked_list_size
-  [14] find_previous_entry_for_key [19] ioopm_hash_table_lookup [6] key_equiv
-  [16] hash_table_insert      [15] ioopm_hash_table_size   [8] links_destroy
-  [17] hash_table_lookup      [11] ioopm_hash_table_values [4] process_file
-  [22] ioopm_hash_table_create [9] ioopm_linked_list_append [3] process_word
-  [23] ioopm_hash_table_destroy [13] ioopm_linked_list_create [25] sort_keys
-   [2] ioopm_hash_table_has_key [7] ioopm_linked_list_destroy [12] string_sum_hash
+   [9] entry_create            [6] ioopm_hash_table_has_key [17] ioopm_linked_list_destroy
+  [11] entry_destroy           [7] ioopm_hash_table_insert [18] ioopm_linked_list_size
+   [2] find_previous_entry_for_key [14] ioopm_hash_table_keys [19] links_destroy
+   [5] hash_table_insert       [4] ioopm_hash_table_lookup [20] process_file
+   [3] hash_table_lookup      [15] ioopm_hash_table_size   [8] process_word
+  [12] ioopm_hash_table_create [10] ioopm_linked_list_append [21] sort_keys
+  [13] ioopm_hash_table_destroy [16] ioopm_linked_list_create [1] string_sum_hash
