@@ -124,8 +124,7 @@ void test_insert_once()
     char *struct_value = answer.value.string_value;
     CU_ASSERT_PTR_NULL(struct_value);
   }
-  // TODO: Test when insert and lookup are given a negative integer.
-  
+
   // Checks that insert works combined with lookup.
 
   // Insert with strings as keys
@@ -188,15 +187,22 @@ void test_insert_once()
 
 
   // Checks that inserts works for negative integer values for key.
-  ioopm_hash_table_insert(ht, int_elem(-1), ptr_elem("Tomat"));
-  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("Tomat")));
+  ioopm_hash_table_insert(ht, int_elem(-1), ptr_elem("Tomato"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("Tomato")));
   CU_ASSERT_TRUE(ioopm_hash_table_lookup(ht, int_elem(-1)).success); 
   CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, int_elem(-1)));
 
+  // Change the value with negative key
+  ioopm_hash_table_insert(ht, int_elem(-1), ptr_elem("Avocado"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("Avocado")));
 
   // Test to insert at 0
   ioopm_hash_table_insert(ht, int_elem(0), ptr_elem("ju8emjihuj766hui"));
   CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("ju8emjihuj766hui")));
+
+  // Change value with key 0
+  ioopm_hash_table_insert(ht, int_elem(0), ptr_elem("Chicken"));
+  CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, ptr_elem("Chicken")));
 
 
   // HUGE Test
@@ -220,6 +226,7 @@ void test_insert_once()
   // Test size works for big numbers.
   CU_ASSERT_EQUAL(1257, ioopm_hash_table_size(ht_huge_key_int));
   CU_ASSERT_TRUE(1257 == ioopm_hash_table_size(ht_huge_key_int));
+
   // Make sure keys list contains all the correct keys.
   ioopm_list_t *list_of_key_ints = ioopm_hash_table_keys(ht_huge_key_int);
   CU_ASSERT_EQUAL(ioopm_hash_table_size(ht_huge_key_int), ioopm_linked_list_size(list_of_key_ints));

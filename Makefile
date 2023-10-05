@@ -1,38 +1,33 @@
-CC = gcc
-FLAGS = -Wall -g
+CC =gcc
+FLAGS =-Wall -g
 GCOVFLAGS = -fprofile-arcs -ftest-coverage
 MEM = valgrind --leak-check=full
 
 
 %.o: %.c %.h
-	$(CC) $(FLAGS) $<
+	$(CC) $(FLAGS) $< -c
 
 
 
-linked_list_test: linked_list.o  linked_list_tests.c
-	$(CC) $(FLAGS) $^ -o $@ -lcunit
+build_ll_test: linked_list.o  linked_list_tests.c
+	$(CC) $(FLAGS) $^ -lcunit -o $@
 
-test_ll: linked_list_test
-	./linked_list_test
+test_ll: build_ll_test
+	./build_ll_test	
 
-test_ll_mem: linked_list.o linked_list_test
-	valgrind --leak-check=full ./linked_list_test
-
-
-
-hash_table_test: hash_table.o hash_table_tests.c
-	$(CC) $(FLAGS) $^ -o $@ -lcunit
-
-test_ht: hash_table_test
-	./hash_table_test
-
-test_ht_mem: hash_table.o hash_table_test
-	valgrind --leak-check=full ./hash_table_test
+test_ll_mem: linked_list.o build_ll_test
+	$(MEM) ./build_ll_test
 
 
-all: linked_list.o hash_table.o
-	make linked_list.o	
-	make hash_table.o
+
+build_ht_test: hash_table.o linked_list.o hash_table_tests.c
+	$(CC) $(FLAGS) hash_table.c hash_table_tests.c -o $@ -lcunit
+
+test_ht: build_ht_test
+	./build_ht_test
+
+test_ht_mem: build_ht_test
+	$(MEM) ./build_ht_test
 
 
 memtest:
@@ -94,12 +89,17 @@ gprof_16k: freq-count.c
 	./freq_count 16k-words.txt
 	gprof freq_count gmon.out > prof_output
 
-
-
+test:
+	make freq_small
+	make freq_1k
+	make freq_10k
+	make freq_16k
 
 clean:
 	rm -f *.o
-	rm -f test_ht test_ll memtest test_ht_mem test_ll_mem freq freq_10k freq_16k freq_1k freq_count freq_small gcov_ht gcov_ll 
-	rm -f gprof_10k gprof_16k gprof_1k gprof_small
+	rm -f *.gcov
+	rm -f *.gcda
+	rm -f *.gcno
+	rm -f freq_count build_ht_test build_ll_test 
 
-.PHONY: test clean
+.PHONY: test clean freq_small freq_1k freq_10k freq_16k gprof_small gprof_1k gprof_10k gprof_16k gcov_ht gcov_ll test_ht_mem test_ll_mem
