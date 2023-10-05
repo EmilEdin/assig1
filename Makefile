@@ -89,6 +89,7 @@ gprof_16k: freq-count.c
 	./freq_count 16k-words.txt
 	gprof freq_count gmon.out > prof_output
 
+
 test:
 	make freq_small
 	make freq_1k
