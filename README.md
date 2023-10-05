@@ -13,6 +13,8 @@
 * The linked list is NOT implemented with a sentinel link.
 * When we create a hash table the function ioopm_hash_table_create takes in two arguments. If the first argument (hash_fun) is NULL, then we treat keys as ints, otherwise strings. If the second argument (eq_fun) is NULL, then values are ints, otherwise strings. 
 * If a function has an index argument, we use assert in our function to make sure we do not remove or acess memory out of bounds. When it comes to types, that we mentioned previously, it's a precondition that is also specified in the repsective .h file. 
+* The hash table does take ownership of the data of its keys and values
+* The linked list does take ownership of the data of its keys and values
 
 # Initial Profiling Results
 /* Small.txt */
