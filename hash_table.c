@@ -8,7 +8,6 @@
 #include "linked_list.c"
 #define No_Buckets 17
 
-
 static bool int_compare(elem_t a, elem_t b) { return a.int_value == b.int_value;}
 
 typedef struct entry entry_t;
