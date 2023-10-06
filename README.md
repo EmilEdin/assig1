@@ -82,6 +82,9 @@ As to the smaller files we do not really know the behaviour but we expect simili
 /* Based on these results, do you see a way to make your program go faster? */
 Yes, since size takes up a lot of time in atleast the bigger files, we could make the function run in constant time by having an extra struct component that would track the size of the hash table without iterating through the whole hash table each time we want to know the size. So each time we insert or remove an element, we would have to increase vice versa decrease the size variable in the hash table struct. When it comes to append we do not know, because it takes constant time, it just takes up a lot of time since we call it a lot during the program. 
 
+Update:
+We refactored our hash_table_has_key function and now our program runs much better, since previously the function did unnecessary work to find if the hash table contains a key, so our gprof result is vastly different than before.
+
 // We obtained the numbers using gprof //
 
 
