@@ -101,6 +101,6 @@ clean:
 	rm -f *.gcov
 	rm -f *.gcda
 	rm -f *.gcno
-	rm -f freq_count build_ht_test build_ll_test 
+	rm -f freq_count build_ht_test build_ll_test freq-count gmon.out hash_table
 
 .PHONY: test clean freq_small freq_1k freq_10k freq_16k gprof_small gprof_1k gprof_10k gprof_16k gcov_ht gcov_ll test_ht_mem test_ll_mem
